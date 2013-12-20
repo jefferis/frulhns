@@ -1,8 +1,21 @@
 Package: frulhns
-Title: 
-Description: 
+Title: Data package for Kohl, Ostrovsky et al 10.1016/j.cell.2013.11.025
+Description: Traced neurons and summary statistical data to accompany:
+    A bidirectional circuit switch reroutes pheromone signals in male and female
+    brains Cell, Volume 155, Issue 7, 1610-1623, 19 December 2013
+    doi:10.1016/j.cell.2013.11.025 Johannes Kohl*, Aaron D. Ostrovsky*, Shahar
+    Frechter, Gregory S.X.E. Jefferis
 Version: 0.1
-Authors@R: Gregory, Jefferis, aut, cre, jefferis@gmail.com
-Depends: R (>= 3.0.2)
-License: GPL>=3
+Author: Gregory Jefferis
+Maintainer: Gregory Jefferis <jefferis@mrc-lmb.cam.ac.uk>
+Depends:
+    coin,
+    R (>= 3.0.2)
+License: GPL-3
+Suggests:
+    knitr
+VignetteBuilder: knitr
 LazyData: true
+Collate:
+    'frulhns-package.r'
+    'spikefunctions.r'
