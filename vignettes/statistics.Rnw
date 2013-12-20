@@ -1,0 +1,381 @@
+%% LyX 2.0.5 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[british]{article}
+\usepackage{mathptmx}
+\usepackage{helvet}
+\usepackage{courier}
+\renewcommand{\familydefault}{\rmdefault}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\geometry{verbose,tmargin=3cm,bmargin=3cm,lmargin=3cm,rmargin=3cm}
+\usepackage{array}
+\usepackage{rotfloat}
+\usepackage{multirow}
+
+\makeatletter
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+%% Because html converters don't know tabularnewline
+\providecommand{\tabularnewline}{\\}
+
+\makeatother
+
+\usepackage{babel}
+\begin{document}
+<<setup, include=FALSE, cache=FALSE>>=
+library(knitr)
+library(frulhns)
+library(gphys)
+# this is equivalent to \SweaveOpts{...}
+opts_chunk$set(fig.path='figure/minimal-', fig.align='center', fig.show='hold')
+options(replace.assign=TRUE,width=55)
+library(coin)
+@
+
+Calculate response stats
+
+<<>>=
+data('response_data',package='frulhns')
+pvals.poisson=t(sapply(asr,poissonTestOdours,maxtrials=4,alternative='greater'))
+@Make data subsets for each figure
+
+<<include=FALSE>>=
+data('fixedUseful',package='frulhns')
+wt_cells=subset(fixedUseful,shortGenotype %in%c("fru","JK1029",'JK56'))
+
+wt_cells$resp.sumAll=apply(pvals.poisson[wt_cells$'Igor file',],1,function(x) sum(x<0.05,na.rm=T))
+wt_cells$resp.any=wt_cells$resp.sumAll>0
+
+# Or67d Fig 2
+Or67d_cells=subset(fixedUseful,shortGenotype %in%c("Or67d","JK1029") & ((cluster=='aSP-g' & sex=='female')| (cluster=='aSP-f' & sex=='male')))
+
+Or67d_cells$mut<-'wt'
+Or67d_cells[Or67d_cells$shortGenotype=="Or67d",'mut']='Or67d'
+Or67d_cells$cluster=factor(Or67d_cells$cluster)
+Or67d_cells$mut=factor(Or67d_cells$mut,levels=c("wt",'Or67d'))
+# Or67d_cells$sex=factor(Or67d_cells$sex,levels=c("male","female"))
+Or67d_cells$mutsex=factor(paste(Or67d_cells$mut,Or67d_cells$sex))
+Or67d_cells$dummy=factor(rep('1',nrow(Or67d_cells)))
+
+# fruf Fig 4
+frufdata=subset(fixedUseful,shortGenotype%in%c("fruF","JK56"))
+frufdata$compoundgeno=factor(paste(frufdata$sex,frufdata$shortGenotype),
+  levels=c("female JK56","male JK56","male fruF"))
+levels(frufdata$compoundgeno)=c("female",'male','fru-/- male')
+frufdata$mut<-'wt'
+frufdata[frufdata$shortGenotype=="fruF",'mut']='fruF'
+frufdata$mut=factor(frufdata$mut,levels=c("wt",'fruF'))
+
+# fruM Fig 5
+fruM_cells=subset(fixedUseful,cluster%in%c('aSP-g','aSP-f','aSP-h') & shortGenotype%in%c('JK1029','fruM') )
+
+fruM_cells$mut<-'wt'
+fruM_cells[fruM_cells$celltype=="fruM.f",'mut']='fruM'
+fruM_cells$mut=factor(fruM_cells$mut,levels=c("wt",'fruM'))
+fruM_cells$dummy=factor(rep('1',nrow(fruM_cells)))
+
+# make a compound factor for sex and genotype
+fruM_cells$mutSex=paste(fruM_cells$mut,fruM_cells$sex,sep='.')
+fruM_cells$mutSex=factor(fruM_cells$mutSex,levels=c('wt.female','wt.male','fruM.female'))
+levels(fruM_cells$mutSex)=c("wt female","wt male",'fruM female')
+
+# tra Fig 6
+tra_cells=subset(fixedUseful,cluster%in%c('aSP-g','aSP-f','aSP-h') & shortGenotype%in%c('JK1029','tra','fru','JK56') )
+
+tra_cells$mut<-'wt'
+tra_cells[tra_cells$celltype=="tra.f",'mut']='tra'
+tra_cells$mut=factor(tra_cells$mut,levels=c("wt",'tra'))
+tra_cells$dummy=factor(rep('1',nrow(tra_cells)))
+# make a compound factor for sex and genotype
+tra_cells$mutSex=paste(tra_cells$mut,tra_cells$sex,sep='.')
+tra_cells$mutSex=factor(tra_cells$mutSex,levels=c('wt.female','tra.female','wt.male'))
+levels(tra_cells$mutSex)=c("wt F","tra F","wt M")
+
+@
+
+Define some utility functions
+
+<<>>=
+s=statistic
+p=function(...) format.pval(pvalue(...),digits=2)
+stars <- function(pv) symnum(pv, corr = FALSE, na = FALSE, cutpoints = c(0, 0.001, 0.01, 0.05, 0.1, 1),symbols = c("***", "**", "*", ".", " "))
+
+#' nicely formatted p values (with stars)
+ps<-function(...) paste(p(...),stars(pvalue(...)))
+#' number of samples in test data
+n<-function(s) {
+  if(inherits(s,"ScalarIndependenceTest")) {
+    nrow(s@statistic@x)
+  } else if(inherits(s,"QuadTypeIndependenceTest")) {
+    sum(s@statistic@weights)
+  } else {
+    NA
+  }
+}
+@
+
+
+Ok now lets calculate the stats that we need. First we'll look at
+the wild type cells.
+
+<<>>=
+wt_stats=list()
+# response fraction differences between wt male and female
+wtclusters_by_sex=lapply(sprintf("aSP-%s",c("f","g","h")),function(lhcluster) with(subset(wt_cells,cluster==lhcluster),table(sex,resp.cVA)))
+(wt_stats[['P3A']]=chisq_test(wtclusters_by_sex[[1]]))
+
+(wt_stats[['P3B']]=chisq_test(wtclusters_by_sex[[2]]))
+(wt_stats[['P3C']]=chisq_test(wtclusters_by_sex[[3]]))
+
+# response magnitude differences between wt male and female
+(wt_stats[['S3A']]=oneway_test(cVA2~sex,data=subset(wt_cells,cluster=='aSP-f')))
+(wt_stats[['S3B']]=oneway_test(cVA2~sex,data=subset(wt_cells,cluster=='aSP-g')))
+(wt_stats[['S3C']]=oneway_test(cVA2~sex,data=subset(wt_cells,cluster=='aSP-h')))
+
+@
+
+Let's compare the peak response frequency of male aSP-f and female
+aSP-g neurons. First calculate the peak frequencies across multiple
+bins:
+
+<<>>==
+wt.genos<-c('fru','JK56','JK1029')
+windows<-seq(from=2150,by=200,length=5)
+
+# restrict to cVA 
+wt.asp_fg.cVA=subset(fixedUseful,shortGenotype%in%wt.genos&resp.cVA==T & cluster%in%c('aSP-f','aSP-g'))
+
+# Find the mean number of spikes in 200ms bins starting from 1 second
+for(cell in rownames(wt.asp_fg.cVA)){
+  message("Summarising spikes for cell: ",cell)
+  cVAspikes=subset(allspikes[[cell]],'cVA')
+  for (window in windows){
+    wt.asp_fg.cVA[cell,as.character(window)]= 
+      mean(OdourResponseFromSpikes(cVAspikes,response=c(window,window+200),base=c(0,2000),freq=T)$cVA)
+  }
+}
+
+# get the maximum mean response for aSP-f,g,h responders across the bins
+with(wt.asp_fg.cVA,
+  by(wt.asp_fg.cVA[,as.character(windows)],list(cluster,sex),function(x)
+    max(apply(x,2,function(x) mean(x,na.rm=T)))))
+
+# for each neuron, find max response for each of 5 bins under consideration
+# then take median of that per group
+peak_responses=with(wt.asp_fg.cVA,
+  by(wt.asp_fg.cVA[,as.character(windows)],list(cluster,sex),function(x)
+    median(apply(x,1,function(x) max(x,na.rm=T)))))
+@
+
+Now we can find the peak frequency for each neuron from the 5 bins
+under consideration.
+
+<<>>=
+# for each neuron, find max response for each of 5 bins under consideration
+# then take median of that per group
+windows<-seq(from=2150,by=200,length=5)
+peak_responses=with(wt.asp_fg.cVA, by(wt.asp_fg.cVA[,as.character(windows)],list(cluster,sex),function(x) median(apply(x,1,function(x) max(x,na.rm=T)))))
+peak_responses
+peak_3AB=oneway_test(`2150`~sex,data=wt.asp_fg.cVA)
+require(ggplot2)
+qplot(`2150`,data=wt.asp_fg.cVA,fill=sex,col=resp.cVA)
+@
+
+Now compare sparseness of male aSP-f and female aSP-g neurons, only
+considering cVA responders.
+
+<<>>=
+d=subset(wt_cells,!is.na(S) & (cluster=='aSP-f' & sex=='male') | (cluster=='aSP-g' & sex=='female') & resp.cVA)
+S_3AB=wilcox_test(S~clustersex,droplevels(d))
+@
+
+We noticed that cVA responses were weaker and less frequent from bilateral
+male 3A neurons
+
+<<>>=
+bilat_cells=structure(c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,  FALSE, FALSE, FALSE, TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, FALSE,  TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE,  FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE), .Names = c("nm20110907c3", "nm20110908c0", "nm20110911c0",  "nm20110911c4", "nm20110911c5", "nm20110913c0", "nm20110914c4",  "nm20120308c0", "nm20120417c0", "nm20120418c0", "nm20120420c1",  "nm20120423c4", "nm20120502c2", "nm20111011c0", "nm20120404c0",  "nm20120810c0", "nm20120811c2", "nm20120811c3", "nm20120811c1",  "nm20120812c1", "nm20120812c2", "nm20120814c2", "nm20120814c0",  "nm20120815c4", "nm20120816c2", "nm20120817c0", "nm20120925c2",  "nm20121127c2", "nm20121127c3", "nm20121130c3", "nm20120818c2",  "nm20120402c0", "nm20120813c1", "nm20120811c4", "nm20120813c0",  "nm20120814c1", "nm20120817c2",'nm20121130c2'))
+wt_cells$bilat=NA
+wt_cells[names(bilat_cells),'bilat']=bilat_cells
+wt_stats[['SBilat3A']]=oneway_test(cVA2~factor(bilat),data=subset(wt_cells,cluster=='aSP-f' & sex=='male'))
+wt_stats[['PBilat3A']]=chisq_test(with(subset(wt_cells,cluster=='aSP-f' & sex=='male'),table(bilat,resp.cVA)))
+@
+
+Now for the Or67d mutant cells (Figure 2)
+
+<<>>=
+Or67d_clusters_bymut=lapply(sprintf("aSP-%s",c("f","g")),
+	function(lhcluster) with(subset(Or67d_cells,cluster==lhcluster),table(mut,resp.cVA)))
+
+Or67d_stats=list()
+# response fraction differs between Or67d and male aSP-f
+Or67d_stats[['aSP-f']]=chisq_test(Or67d_clusters_bymut[[1]])
+
+# response fraction differs between Or67d and female aSP-g
+Or67d_stats[['aSP-g']]=chisq_test(Or67d_clusters_bymut[[2]])
+
+(Or67d_stats[['S3A']]=oneway_test(cVA2~mut,data=subset(Or67d_cells,cluster=='aSP-f'),alternative='greater'))
+(Or67d_stats[['S3B']]=oneway_test(cVA2~mut,data=subset(Or67d_cells,cluster=='aSP-g'),alternative='greater'))
+
+@
+
+Now for the fru-/- mutant cells (Figure 4)
+
+<<>>=
+fruf_stats=list()
+# response fraction differs between fruf and wt male 3A neurons
+(fruf_p=chisq_test(tbl2<-with(subset(frufdata,sex=='male'),table(mut,resp.cVA))))
+
+# response magnitude differences between wt male and fru -/- mutant male 3A neurons
+(fruf_s=oneway_test(cVA2~mut,data=subset(frufdata,cluster=='aSP-f' & sex=='male'),alternative='greater'))
+
+# There was no significant difference in the proportion of responders
+# or in the group means (using non-parametic oneway_test)
+# However there are numerous cells in both group which cannot respond
+# Therefore compare response magnitude only for cVA responders
+(fruf_cva_s=oneway_test(cVA2~mut,data=subset(frufdata,cluster=='aSP-f' & sex=='male' & resp.cVA),alternative='greater'))
+
+@
+
+Now compare sparseness of wt male aSP-f and mutant aSP-f neurons,
+only considering cVA responders.
+
+<<>>=
+d=subset(frufdata,!is.na(S) & cluster=='aSP-f' & sex=='male' & resp.cVA)
+S_fruf=wilcox_test(S~mut,droplevels(d))
+@
+
+Now for the fruM mutant cells (Figure 5)
+
+<<>>=
+
+fruM_clusters_by_mut=lapply(sprintf("aSP-%s",c("f","g","h")),
+	function(lhcluster) with(subset(fruM_cells,cluster==lhcluster & sex=='female'),table(mut,resp.cVA)))
+
+fruM_stats=list()
+# response fraction differs between fruM and female aSP-f
+(fruM_stats[['P3A']]=chisq_test(fruM_clusters_by_mut[[1]]))
+
+# response fraction differs between fruM and female aSP-g
+(fruM_stats[['P3B']]=chisq_test(fruM_clusters_by_mut[[2]]))
+
+# response fraction differs between fruM and female aSP-h
+(fruM_stats[['P3C']]=chisq_test(fruM_clusters_by_mut[[3]]))
+
+(fruM_stats[['S3A']]=oneway_test(cVA2~mut,data=subset(fruM_cells,cluster=='aSP-f' & sex=='female'),alternative='less'))
+(fruM_stats[['S3B']]=oneway_test(cVA2~mut,data=subset(fruM_cells,cluster=='aSP-g' & sex=='female'),alternative='greater'))
+(fruM_stats[['S3C']]=oneway_test(cVA2~mut,data=subset(fruM_cells,cluster=='aSP-h' & sex=='female'),alternative='less'))
+
+# compare fruM female and wt male to see if there is any difference
+oneway_test(cVA2~mut,data=subset(fruM_cells,cluster=='aSP-f' & mutSex!='wt female'))
+oneway_test(cVA2~mut,data=subset(fruM_cells,cluster=='aSP-h' & mutSex!='wt female'))
+@
+
+And finally the (clonal) tra mutant cells (Figure 6)
+
+<<>>=
+tra_clusters_by_mut=lapply(sprintf("aSP-%s",c("f","g","h")),
+	function(lhcluster) with(subset(tra_cells,cluster==lhcluster & sex=='female'),table(mut,resp.cVA)))
+
+tra_stats=list()
+# response fraction differs between tra mut and wt female aSP-f
+(tra_stats[['P3A']]=chisq_test(tra_clusters_by_mut[[1]]))
+
+# response fraction differs between tra mut and wt female aSP-g
+(tra_stats[['P3B']]=chisq_test(tra_clusters_by_mut[[2]]))
+
+(tra_stats[['P3C']]=chisq_test(tra_clusters_by_mut[[3]]))
+
+(tra_stats[['S3A']]=oneway_test(cVA2~mut,data=subset(tra_cells,cluster=='aSP-f' & sex=='female'),alternative='less'))
+(tra_stats[['S3B']]=oneway_test(cVA2~mut,data=subset(tra_cells,cluster=='aSP-g' & sex=='female'),alternative='greater'))
+(tra_stats[['S3C']]=oneway_test(cVA2~mut,data=subset(tra_cells,cluster=='aSP-h' & sex=='female'),alternative='less'))
+
+# compare tra1 clone (in female) and wt male to see if there is any difference
+oneway_test(cVA2~mut,data=subset(tra_cells,cluster=='aSP-f' & mutSex!='wt female'))
+oneway_test(cVA2~mut,data=subset(tra_cells,cluster=='aSP-h' & mutSex!='wt female'))
+@
+
+\newpage{}
+
+\pagestyle{empty}
+
+\begin{sidewaystable*}
+\resizebox{\columnwidth}{!}{%
+
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+\hline 
+\textbf{Sex-specific pheromone responses in }\textbf{\emph{fru}}+\textbf{
+LHNs} & \textbf{Cluster} & \textbf{Group 1} & \textbf{Group 2} & \textbf{Figure} & \textbf{Test} & \textbf{Hypothesis} & \textbf{Statistic} & \textbf{p} & \textbf{n}\tabularnewline
+\hline 
+\multirow{3}{*}{Proportion cVA-responsive} & aSP-f & female & male  & 1M & $\chi^2$ &  & $\chi^2$=\Sexpr{s(wt_stats[['P3A']])} & \Sexpr{ps(wt_stats[['P3A']])} & \Sexpr{n(wt_stats[['P3A']])}\tabularnewline
+\cline{2-10} 
+ & aSP-g & female & male  & 1N & $\chi^2$ &  & $\chi^2$=\Sexpr{s(wt_stats[['P3B']])} & \Sexpr{ps(wt_stats[['P3B']])} & \Sexpr{n(wt_stats[['P3B']])}\tabularnewline
+\cline{2-10} 
+ & aSP-h & female & male  & 1O & $\chi^2$ &  & $\chi^2$=\Sexpr{s(wt_stats[['P3C']])} & \Sexpr{ps(wt_stats[['P3C']])} & \Sexpr{n(wt_stats[['P3C']])}\tabularnewline
+\hline 
+\multirow{3}{*}{Magnitude cVA response} & aSP-f & female & male  & 1M & One way (permutation) & $\mu_1 \neq \mu_2$ & Z=\Sexpr{s(wt_stats[['S3A']])} & \Sexpr{ps(wt_stats[['S3A']])} & \Sexpr{n(wt_stats[['S3A']])}\tabularnewline
+\cline{2-10} 
+ & aSP-g & female & male  & 1N & One way (permutation) & $\mu_1 \neq \mu_2$ & Z=\Sexpr{s(wt_stats[['S3B']])} & \Sexpr{ps(wt_stats[['S3B']])} & \Sexpr{n(wt_stats[['S3B']])}\tabularnewline
+\cline{2-10} 
+ & aSP-h & female & male  & 1O & One way (permutation) & $\mu_1 \neq \mu_2$ & Z=\Sexpr{s(wt_stats[['S3C']])} & \Sexpr{ps(wt_stats[['S3C']])} & \Sexpr{n(wt_stats[['S3C']])}\tabularnewline
+\hline 
+\multicolumn{1}{|c|}{Compare Magnitude (cVA-responsive only)} & aSP-f,aSP-g & aSP-g female & aSP-f male & 1M--O & One way (permutation) & $\mu_1 \neq \mu_2$ & Z=\Sexpr{s(peak_3AB)} & \Sexpr{ps(peak_3AB)} & \Sexpr{n(peak_3AB)}\tabularnewline
+\hline 
+Compare Sparseness (cVA-responsive only) & aSP-f,aSP-g & aSP-g female & aSP-f male & 2G & Wilcoxon & $\mu_1 \neq \mu_2$ & Z=\Sexpr{s(S_3AB)} & \Sexpr{ps(S_3AB)} & \Sexpr{n(S_3AB)}\tabularnewline
+\hline 
+Proportion cVA-responsive (unilateral vs bilateral) & aSP-f & aSP-f uni male & aSP-f bilat male & 2H & $\chi^2$ &  & $\chi^2$=\Sexpr{s(wt_stats[['PBilat3A']])} & \Sexpr{ps(wt_stats[['PBilat3A']])} & \Sexpr{n(wt_stats[['PBilat3A']])}\tabularnewline
+\hline 
+Compare Magnitude (unilateral vs bilateral) & aSP-f & aSP-f uni male & aSP-f bilat male & 2H & One way (permutation) & $\mu_1 \neq \mu_2$ & Z=\Sexpr{s(wt_stats[['SBilat3A']])} & \Sexpr{ps(wt_stats[['SBilat3A']])} & \Sexpr{n(wt_stats[['SBilat3A']])}\tabularnewline
+\hline 
+\textbf{cVA responses in }\emph{fru}\textbf{+ LHNs depend on a common
+input} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{}\tabularnewline
+\hline 
+\multirow{2}{*}{Proportion cVA-responsive} & aSP-f & wt male  & \textit{Or67d}\textit{\emph{\textsuperscript{-/-}}}male & 3C & $\chi^2$ &  & $\chi^2$=\Sexpr{s(Or67d_stats[['aSP-f']])} & \Sexpr{ps(Or67d_stats[['aSP-f']])} & \Sexpr{n(Or67d_stats[['aSP-f']])}\tabularnewline
+\cline{2-10} 
+ & aSP-g & wt female  & \textit{Or67d}\textit{\emph{\textsuperscript{-/-}}}female & 3C & $\chi^2$ &  & $\chi^2$=\Sexpr{s(Or67d_stats[['aSP-g']])} & \Sexpr{ps(Or67d_stats[['aSP-g']])} & \Sexpr{n(Or67d_stats[['aSP-g']])}\tabularnewline
+\hline 
+\multirow{2}{*}{Magnitude cVA response} & aSP-f & wt male  & \textit{Or67d}\textit{\emph{\textsuperscript{-/-}}}male & 3C & One way (permutation) & $\mu_1 > \mu_2$ & Z=\Sexpr{s(Or67d_stats[['S3A']])} & \Sexpr{ps(Or67d_stats[['S3A']])} & \Sexpr{n(Or67d_stats[['S3A']])}\tabularnewline
+\cline{2-10} 
+ & aSP-g & wt female  & \textit{Or67d}\textit{\emph{\textsuperscript{-/-}}}female & 3C & One way (permutation) & $\mu_1 > \mu_2$ & Z=\Sexpr{s(Or67d_stats[['S3B']])} & \Sexpr{ps(Or67d_stats[['S3B']])} & \Sexpr{n(Or67d_stats[['S3B']])}\tabularnewline
+\hline 
+\textbf{Fru\textsuperscript{M} is necessary for the male form of
+the switch} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{}\tabularnewline
+\hline 
+Magnitude cVA response & aSP-f & wt male & \emph{fru\textsuperscript{\emph{-/-}}}male & 4C & One way (permutation) & $\mu_1 > \mu_2$ & Z=\Sexpr{s(fruf_s)} & \Sexpr{ps(fruf_s)} & \Sexpr{n(fruf_s)}\tabularnewline
+\hline 
+Compare Sparseness (cVA-responsive only) & aSP-f & wt male & \emph{fru\textsuperscript{\emph{-/-}}}male & 4D & Wilcoxon & $\mu_1 \neq \mu_2$ & Z=\Sexpr{s(S_fruf)} & \Sexpr{ps(S_fruf)} & \Sexpr{n(S_fruf)}\tabularnewline
+\hline 
+\textbf{Fru\textsuperscript{M} specifies the male form of the circuit
+switch} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{}\tabularnewline
+\hline 
+\multirow{3}{*}{Proportion cVA-responsive} & aSP-f & wt female & \emph{fru\textsuperscript{M }}female & 5H & $\chi^2$ &  & $\chi^2$=\Sexpr{s(fruM_stats[['P3A']])} & \Sexpr{ps(fruM_stats[['P3A']])} & \Sexpr{n(fruM_stats[['P3A']])}\tabularnewline
+\cline{2-10} 
+ & aSP-g & wt female & \emph{fru\textsuperscript{M }}female & 5H & $\chi^2$ &  & $\chi^2$=\Sexpr{s(fruM_stats[['P3B']])} & \Sexpr{ps(fruM_stats[['P3B']])} & \Sexpr{n(fruM_stats[['P3B']])}\tabularnewline
+\cline{2-10} 
+ & aSP-h & wt female & \emph{fru\textsuperscript{M }}female & S7C & $\chi^2$ &  & $\chi^2$=\Sexpr{s(fruM_stats[['P3C']])} & \Sexpr{ps(fruM_stats[['P3C']])} & \Sexpr{n(fruM_stats[['P3C']])}\tabularnewline
+\hline 
+\multirow{3}{*}{Magnitude cVA response} & aSP-f & wt female & \emph{fru\textsuperscript{M }}female & 5H & One way (permutation) & $\mu_1 < \mu_2$ & Z=\Sexpr{s(fruM_stats[['S3A']])} & \Sexpr{ps(fruM_stats[['S3A']])} & \Sexpr{n(fruM_stats[['S3A']])}\tabularnewline
+\cline{2-10} 
+ & aSP-g & wt female & \emph{fru\textsuperscript{M }}female & 5H & One way (permutation) & $\mu_1 > \mu_2$ & Z=\Sexpr{s(fruM_stats[['S3B']])} & \Sexpr{ps(fruM_stats[['S3B']])} & \Sexpr{n(fruM_stats[['S3B']])}\tabularnewline
+\cline{2-10} 
+ & aSP-h & wt female & \emph{fru\textsuperscript{M }}female & S7C & One way (permutation) & $\mu_1 < \mu_2$ & Z=\Sexpr{s(fruM_stats[['S3C']])} & \Sexpr{ps(fruM_stats[['S3C']])} & \Sexpr{n(fruM_stats[['S3C']])}\tabularnewline
+\hline 
+\textbf{Selectively masculinising }\textbf{\emph{fru}}\textbf{+ LHNs
+can flip the switch} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{}\tabularnewline
+\hline 
+\multirow{3}{*}{Proportion cVA-responsive} & aSP-f & wt female & \emph{tra\textsuperscript{\emph{1}}} female & 6H & $\chi^2$ &  & $\chi^2$=\Sexpr{s(tra_stats[['P3A']])} & \Sexpr{ps(tra_stats[['P3A']])} & \Sexpr{n(tra_stats[['P3A']])}\tabularnewline
+\cline{2-10} 
+ & aSP-g & wt female & \emph{tra\textsuperscript{\emph{1}}} female & 6H & $\chi^2$ &  & $\chi^2$=\Sexpr{s(tra_stats[['P3B']])} & \Sexpr{ps(tra_stats[['P3B']])} & \Sexpr{n(tra_stats[['P3B']])}\tabularnewline
+\cline{2-10} 
+ & aSP-h & wt female & \emph{tra\textsuperscript{\emph{1}}} female & S7G & $\chi^2$ &  & $\chi^2$=\Sexpr{s(tra_stats[['P3C']])} & \Sexpr{ps(tra_stats[['P3C']])} & \Sexpr{n(tra_stats[['P3C']])}\tabularnewline
+\hline 
+\multirow{3}{*}{Magnitude cVA response} & aSP-f & wt female & \emph{tra\textsuperscript{\emph{1}}} female & 6H & One way (permutation) & $\mu_1 < \mu_2$ & Z=\Sexpr{s(tra_stats[['S3A']])} & \Sexpr{ps(tra_stats[['S3A']])} & \Sexpr{n(tra_stats[['S3A']])}\tabularnewline
+\cline{2-10} 
+ & aSP-g & wt female & \emph{tra\textsuperscript{\emph{1}}} female & 6H & One way (permutation) & $\mu_1 > \mu_2$ & Z=\Sexpr{s(tra_stats[['S3B']])} & \Sexpr{ps(tra_stats[['S3B']])} & \Sexpr{n(tra_stats[['S3B']])}\tabularnewline
+\cline{2-10} 
+ & aSP-h & wt female & \emph{tra\textsuperscript{\emph{1}}} female & S7G & One way (permutation) & $\mu_1 < \mu_2$ & Z=\Sexpr{s(tra_stats[['S3C']])} & \Sexpr{ps(tra_stats[['S3C']])} & \Sexpr{n(tra_stats[['S3C']])}\tabularnewline
+\hline 
+\end{tabular}}
+\end{sidewaystable*}
+
+\end{document}

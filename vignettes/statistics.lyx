@@ -1,0 +1,6234 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\begin_modules
+knitr
+\end_modules
+\maintain_unincluded_children false
+\language british
+\language_package babel
+\inputencoding utf8
+\fontencoding global
+\font_roman times
+\font_sans helvet
+\font_typewriter courier
+\font_default_family rmdefault
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 3cm
+\topmargin 3cm
+\rightmargin 3cm
+\bottommargin 3cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<setup, include=FALSE, cache=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+library(knitr)
+\end_layout
+
+\begin_layout Plain Layout
+
+library(frulhns)
+\end_layout
+
+\begin_layout Plain Layout
+
+library(gphys)
+\end_layout
+
+\begin_layout Plain Layout
+
+library(coin)
+\end_layout
+
+\begin_layout Plain Layout
+
+# this is equivalent to 
+\backslash
+SweaveOpts{...}
+\end_layout
+
+\begin_layout Plain Layout
+
+opts_chunk$set(fig.path='figure/minimal-', fig.align='center', fig.show='hold')
+\end_layout
+
+\begin_layout Plain Layout
+
+options(replace.assign=TRUE,width=55)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Calculate response statistics for every cell/odour pair using 
+\family typewriter
+poissonTestOdours()
+\family default
+ function, which does a Poisson test on the absolute number of spikes in
+ response to a given odour and corresponding blank.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+data('response_data',package='frulhns')
+\end_layout
+
+\begin_layout Plain Layout
+
+pvals.poisson=t(sapply(asr,poissonTestOdours,maxtrials=4,alternative='greater'))
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+Make data subsets for each figure
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<include=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+wt_cells=subset(fixedUseful,shortGenotype %in%c("fru","JK1029",'JK56'))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+wt_cells$resp.sumAll=apply(pvals.poisson[wt_cells$'Igor file',],1,function(x)
+ sum(x<0.05,na.rm=T))
+\end_layout
+
+\begin_layout Plain Layout
+
+wt_cells$resp.any=wt_cells$resp.sumAll>0
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# Or67d Fig 2
+\end_layout
+
+\begin_layout Plain Layout
+
+Or67d_cells=subset(fixedUseful,shortGenotype %in%c("Or67d","JK1029") & ((cluster
+=='aSP-g' & sex=='female')| (cluster=='aSP-f' & sex=='male')))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+Or67d_cells$mut<-'wt'
+\end_layout
+
+\begin_layout Plain Layout
+
+Or67d_cells[Or67d_cells$shortGenotype=="Or67d",'mut']='Or67d'
+\end_layout
+
+\begin_layout Plain Layout
+
+Or67d_cells$cluster=factor(Or67d_cells$cluster)
+\end_layout
+
+\begin_layout Plain Layout
+
+Or67d_cells$mut=factor(Or67d_cells$mut,levels=c("wt",'Or67d'))
+\end_layout
+
+\begin_layout Plain Layout
+
+# Or67d_cells$sex=factor(Or67d_cells$sex,levels=c("male","female"))
+\end_layout
+
+\begin_layout Plain Layout
+
+Or67d_cells$mutsex=factor(paste(Or67d_cells$mut,Or67d_cells$sex))
+\end_layout
+
+\begin_layout Plain Layout
+
+Or67d_cells$dummy=factor(rep('1',nrow(Or67d_cells)))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# fruf Fig 4
+\end_layout
+
+\begin_layout Plain Layout
+
+frufdata=subset(fixedUseful,shortGenotype%in%c("fruF","JK56"))
+\end_layout
+
+\begin_layout Plain Layout
+
+frufdata$compoundgeno=factor(paste(frufdata$sex,frufdata$shortGenotype),
+\end_layout
+
+\begin_layout Plain Layout
+
+  levels=c("female JK56","male JK56","male fruF"))
+\end_layout
+
+\begin_layout Plain Layout
+
+levels(frufdata$compoundgeno)=c("female",'male','fru-/- male')
+\end_layout
+
+\begin_layout Plain Layout
+
+frufdata$mut<-'wt'
+\end_layout
+
+\begin_layout Plain Layout
+
+frufdata[frufdata$shortGenotype=="fruF",'mut']='fruF'
+\end_layout
+
+\begin_layout Plain Layout
+
+frufdata$mut=factor(frufdata$mut,levels=c("wt",'fruF'))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# fruM Fig 5
+\end_layout
+
+\begin_layout Plain Layout
+
+fruM_cells=subset(fixedUseful,cluster%in%c('aSP-g','aSP-f','aSP-h') & shortGenot
+ype%in%c('JK1029','fruM') )
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+fruM_cells$mut<-'wt'
+\end_layout
+
+\begin_layout Plain Layout
+
+fruM_cells[fruM_cells$celltype=="fruM.f",'mut']='fruM'
+\end_layout
+
+\begin_layout Plain Layout
+
+fruM_cells$mut=factor(fruM_cells$mut,levels=c("wt",'fruM'))
+\end_layout
+
+\begin_layout Plain Layout
+
+fruM_cells$dummy=factor(rep('1',nrow(fruM_cells)))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# make a compound factor for sex and genotype
+\end_layout
+
+\begin_layout Plain Layout
+
+fruM_cells$mutSex=paste(fruM_cells$mut,fruM_cells$sex,sep='.')
+\end_layout
+
+\begin_layout Plain Layout
+
+fruM_cells$mutSex=factor(fruM_cells$mutSex,levels=c('wt.female','wt.male','fruM.fem
+ale'))
+\end_layout
+
+\begin_layout Plain Layout
+
+levels(fruM_cells$mutSex)=c("wt female","wt male",'fruM female')
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# tra Fig 6
+\end_layout
+
+\begin_layout Plain Layout
+
+tra_cells=subset(fixedUseful,cluster%in%c('aSP-g','aSP-f','aSP-h') & shortGenoty
+pe%in%c('JK1029','tra','fru','JK56') )
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+tra_cells$mut<-'wt'
+\end_layout
+
+\begin_layout Plain Layout
+
+tra_cells[tra_cells$celltype=="tra.f",'mut']='tra'
+\end_layout
+
+\begin_layout Plain Layout
+
+tra_cells$mut=factor(tra_cells$mut,levels=c("wt",'tra'))
+\end_layout
+
+\begin_layout Plain Layout
+
+tra_cells$dummy=factor(rep('1',nrow(tra_cells)))
+\end_layout
+
+\begin_layout Plain Layout
+
+# make a compound factor for sex and genotype
+\end_layout
+
+\begin_layout Plain Layout
+
+tra_cells$mutSex=paste(tra_cells$mut,tra_cells$sex,sep='.')
+\end_layout
+
+\begin_layout Plain Layout
+
+tra_cells$mutSex=factor(tra_cells$mutSex,levels=c('wt.female','tra.female','wt.male
+'))
+\end_layout
+
+\begin_layout Plain Layout
+
+levels(tra_cells$mutSex)=c("wt F","tra F","wt M")
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Define some utility functions
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+s=statistic
+\end_layout
+
+\begin_layout Plain Layout
+
+p=function(...) format.pval(pvalue(...),digits=2)
+\end_layout
+
+\begin_layout Plain Layout
+
+stars <- function(pv) symnum(pv, corr = FALSE, na = FALSE, cutpoints = c(0,
+ 0.001, 0.01, 0.05, 0.1, 1),symbols = c("***", "**", "*", ".", " "))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#' nicely formatted p values (with stars)
+\end_layout
+
+\begin_layout Plain Layout
+
+ps<-function(...) paste(p(...),stars(pvalue(...)))
+\end_layout
+
+\begin_layout Plain Layout
+
+#' number of samples in test data
+\end_layout
+
+\begin_layout Plain Layout
+
+n<-function(s) {
+\end_layout
+
+\begin_layout Plain Layout
+
+  if(inherits(s,"ScalarIndependenceTest")) {
+\end_layout
+
+\begin_layout Plain Layout
+
+    nrow(s@statistic@x)
+\end_layout
+
+\begin_layout Plain Layout
+
+  } else if(inherits(s,"QuadTypeIndependenceTest")) {
+\end_layout
+
+\begin_layout Plain Layout
+
+    sum(s@statistic@weights)
+\end_layout
+
+\begin_layout Plain Layout
+
+  } else {
+\end_layout
+
+\begin_layout Plain Layout
+
+    NA
+\end_layout
+
+\begin_layout Plain Layout
+
+  }
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Ok now lets calculate the stats that we need.
+ First we'll look at the wild type cells.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+wt_stats=list()
+\end_layout
+
+\begin_layout Plain Layout
+
+# response fraction differences between wt male and female
+\end_layout
+
+\begin_layout Plain Layout
+
+wtclusters_by_sex=lapply(sprintf("aSP-%s",c("f","g","h")),function(lhcluster)
+ with(subset(wt_cells,cluster==lhcluster),table(sex,resp.cVA)))
+\end_layout
+
+\begin_layout Plain Layout
+
+(wt_stats[['P3A']]=chisq_test(wtclusters_by_sex[[1]]))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+(wt_stats[['P3B']]=chisq_test(wtclusters_by_sex[[2]]))
+\end_layout
+
+\begin_layout Plain Layout
+
+(wt_stats[['P3C']]=chisq_test(wtclusters_by_sex[[3]]))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# response magnitude differences between wt male and female
+\end_layout
+
+\begin_layout Plain Layout
+
+(wt_stats[['S3A']]=oneway_test(cVA2~sex,data=subset(wt_cells,cluster=='aSP-f')))
+\end_layout
+
+\begin_layout Plain Layout
+
+(wt_stats[['S3B']]=oneway_test(cVA2~sex,data=subset(wt_cells,cluster=='aSP-g')))
+\end_layout
+
+\begin_layout Plain Layout
+
+(wt_stats[['S3C']]=oneway_test(cVA2~sex,data=subset(wt_cells,cluster=='aSP-h')))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Let's compare the peak response frequency of male aSP-f and female aSP-g
+ neurons.
+ First calculate the peak frequencies across multiple bins:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>==
+\end_layout
+
+\begin_layout Plain Layout
+
+wt.genos<-c('fru','JK56','JK1029')
+\end_layout
+
+\begin_layout Plain Layout
+
+windows<-seq(from=2150,by=200,length=5)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# restrict to cVA 
+\end_layout
+
+\begin_layout Plain Layout
+
+wt.asp_fg.cVA=subset(fixedUseful,shortGenotype%in%wt.genos&resp.cVA==T & cluster%in%
+c('aSP-f','aSP-g'))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# Find the mean number of spikes in 200ms bins starting from 1 second
+\end_layout
+
+\begin_layout Plain Layout
+
+for(cell in rownames(wt.asp_fg.cVA)){
+\end_layout
+
+\begin_layout Plain Layout
+
+  message("Summarising spikes for cell: ",cell)
+\end_layout
+
+\begin_layout Plain Layout
+
+  cVAspikes=subset(allspikes[[cell]],'cVA')
+\end_layout
+
+\begin_layout Plain Layout
+
+  for (window in windows){
+\end_layout
+
+\begin_layout Plain Layout
+
+    wt.asp_fg.cVA[cell,as.character(window)]= 
+\end_layout
+
+\begin_layout Plain Layout
+
+      mean(OdourResponseFromSpikes(cVAspikes,response=c(window,window+200),base=
+c(0,2000),freq=T)$cVA)
+\end_layout
+
+\begin_layout Plain Layout
+
+  }
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# get the maximum mean response for aSP-f,g,h responders across the bins
+\end_layout
+
+\begin_layout Plain Layout
+
+with(wt.asp_fg.cVA,
+\end_layout
+
+\begin_layout Plain Layout
+
+  by(wt.asp_fg.cVA[,as.character(windows)],list(cluster,sex),function(x)
+\end_layout
+
+\begin_layout Plain Layout
+
+    max(apply(x,2,function(x) mean(x,na.rm=T)))))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# for each neuron, find max response for each of 5 bins under consideration
+\end_layout
+
+\begin_layout Plain Layout
+
+# then take median of that per group
+\end_layout
+
+\begin_layout Plain Layout
+
+peak_responses=with(wt.asp_fg.cVA,
+\end_layout
+
+\begin_layout Plain Layout
+
+  by(wt.asp_fg.cVA[,as.character(windows)],list(cluster,sex),function(x)
+\end_layout
+
+\begin_layout Plain Layout
+
+    median(apply(x,1,function(x) max(x,na.rm=T)))))
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Now we can find the peak frequency for each neuron from the 5 bins under
+ consideration.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+# for each neuron, find max response for each of 5 bins under consideration
+\end_layout
+
+\begin_layout Plain Layout
+
+# then take median of that per group
+\end_layout
+
+\begin_layout Plain Layout
+
+windows<-seq(from=2150,by=200,length=5)
+\end_layout
+
+\begin_layout Plain Layout
+
+peak_responses=with(wt.asp_fg.cVA, by(wt.asp_fg.cVA[,as.character(windows)],list(clus
+ter,sex),function(x) median(apply(x,1,function(x) max(x,na.rm=T)))))
+\end_layout
+
+\begin_layout Plain Layout
+
+peak_responses
+\end_layout
+
+\begin_layout Plain Layout
+
+peak_3AB=oneway_test(`2150`~sex,data=wt.asp_fg.cVA)
+\end_layout
+
+\begin_layout Plain Layout
+
+require(ggplot2)
+\end_layout
+
+\begin_layout Plain Layout
+
+qplot(`2150`,data=wt.asp_fg.cVA,fill=sex,col=resp.cVA)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Now compare sparseness of male aSP-f and female aSP-g neurons, only considering
+ cVA responders.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+d=subset(wt_cells,!is.na(S) & (cluster=='aSP-f' & sex=='male') | (cluster=='aSP-g
+' & sex=='female') & resp.cVA)
+\end_layout
+
+\begin_layout Plain Layout
+
+S_3AB=wilcox_test(S~clustersex,droplevels(d))
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We noticed that cVA responses were weaker and less frequent from bilateral
+ male 3A neurons
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+bilat_cells=structure(c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
+  FALSE, FALSE, FALSE, TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, FALSE,  TRUE,
+ TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE,  FALSE, TRUE, TRUE,
+ TRUE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE), .Names = c("nm20110907c3",
+ "nm20110908c0", "nm20110911c0",  "nm20110911c4", "nm20110911c5", "nm20110913c0"
+, "nm20110914c4",  "nm20120308c0", "nm20120417c0", "nm20120418c0", "nm20120420c1
+",  "nm20120423c4", "nm20120502c2", "nm20111011c0", "nm20120404c0",  "nm20120810
+c0", "nm20120811c2", "nm20120811c3", "nm20120811c1",  "nm20120812c1", "nm2012081
+2c2", "nm20120814c2", "nm20120814c0",  "nm20120815c4", "nm20120816c2", "nm201208
+17c0", "nm20120925c2",  "nm20121127c2", "nm20121127c3", "nm20121130c3",
+ "nm20120818c2",  "nm20120402c0", "nm20120813c1", "nm20120811c4", "nm20120813c0"
+,  "nm20120814c1", "nm20120817c2",'nm20121130c2'))
+\end_layout
+
+\begin_layout Plain Layout
+
+wt_cells$bilat=NA
+\end_layout
+
+\begin_layout Plain Layout
+
+wt_cells[names(bilat_cells),'bilat']=bilat_cells
+\end_layout
+
+\begin_layout Plain Layout
+
+wt_stats[['SBilat3A']]=oneway_test(cVA2~factor(bilat),data=subset(wt_cells,clust
+er=='aSP-f' & sex=='male'))
+\end_layout
+
+\begin_layout Plain Layout
+
+wt_stats[['PBilat3A']]=chisq_test(with(subset(wt_cells,cluster=='aSP-f'
+ & sex=='male'),table(bilat,resp.cVA)))
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Now for the Or67d mutant cells (Figure 2)
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+Or67d_clusters_bymut=lapply(sprintf("aSP-%s",c("f","g")),
+\end_layout
+
+\begin_layout Plain Layout
+
+	function(lhcluster) with(subset(Or67d_cells,cluster==lhcluster),table(mut,resp.c
+VA)))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+Or67d_stats=list()
+\end_layout
+
+\begin_layout Plain Layout
+
+# response fraction differs between Or67d and male aSP-f
+\end_layout
+
+\begin_layout Plain Layout
+
+Or67d_stats[['aSP-f']]=chisq_test(Or67d_clusters_bymut[[1]])
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# response fraction differs between Or67d and female aSP-g
+\end_layout
+
+\begin_layout Plain Layout
+
+Or67d_stats[['aSP-g']]=chisq_test(Or67d_clusters_bymut[[2]])
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+(Or67d_stats[['S3A']]=oneway_test(cVA2~mut,data=subset(Or67d_cells,cluster=='aSP
+-f'),alternative='greater'))
+\end_layout
+
+\begin_layout Plain Layout
+
+(Or67d_stats[['S3B']]=oneway_test(cVA2~mut,data=subset(Or67d_cells,cluster=='aSP
+-g'),alternative='greater'))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Now for the fru-/- mutant cells (Figure 4)
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+fruf_stats=list()
+\end_layout
+
+\begin_layout Plain Layout
+
+# response fraction differs between fruf and wt male 3A neurons
+\end_layout
+
+\begin_layout Plain Layout
+
+(fruf_p=chisq_test(tbl2<-with(subset(frufdata,sex=='male'),table(mut,resp.cVA))))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# response magnitude differences between wt male and fru -/- mutant male
+ 3A neurons
+\end_layout
+
+\begin_layout Plain Layout
+
+(fruf_s=oneway_test(cVA2~mut,data=subset(frufdata,cluster=='aSP-f' & sex=='male'
+),alternative='greater'))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# There was no significant difference in the proportion of responders
+\end_layout
+
+\begin_layout Plain Layout
+
+# or in the group means (using non-parametic oneway_test)
+\end_layout
+
+\begin_layout Plain Layout
+
+# However there are numerous cells in both group which cannot respond
+\end_layout
+
+\begin_layout Plain Layout
+
+# Therefore compare response magnitude only for cVA responders
+\end_layout
+
+\begin_layout Plain Layout
+
+(fruf_cva_s=oneway_test(cVA2~mut,data=subset(frufdata,cluster=='aSP-f' &
+ sex=='male' & resp.cVA),alternative='greater'))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Now compare sparseness of wt male aSP-f and mutant aSP-f neurons, only consideri
+ng cVA responders.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+d=subset(frufdata,!is.na(S) & cluster=='aSP-f' & sex=='male' & resp.cVA)
+\end_layout
+
+\begin_layout Plain Layout
+
+S_fruf=wilcox_test(S~mut,droplevels(d))
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Now for the fruM mutant cells (Figure 5)
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+fruM_clusters_by_mut=lapply(sprintf("aSP-%s",c("f","g","h")),
+\end_layout
+
+\begin_layout Plain Layout
+
+	function(lhcluster) with(subset(fruM_cells,cluster==lhcluster & sex=='female'),
+table(mut,resp.cVA)))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+fruM_stats=list()
+\end_layout
+
+\begin_layout Plain Layout
+
+# response fraction differs between fruM and female aSP-f
+\end_layout
+
+\begin_layout Plain Layout
+
+(fruM_stats[['P3A']]=chisq_test(fruM_clusters_by_mut[[1]]))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# response fraction differs between fruM and female aSP-g
+\end_layout
+
+\begin_layout Plain Layout
+
+(fruM_stats[['P3B']]=chisq_test(fruM_clusters_by_mut[[2]]))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# response fraction differs between fruM and female aSP-h
+\end_layout
+
+\begin_layout Plain Layout
+
+(fruM_stats[['P3C']]=chisq_test(fruM_clusters_by_mut[[3]]))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+(fruM_stats[['S3A']]=oneway_test(cVA2~mut,data=subset(fruM_cells,cluster=='aSP-f
+' & sex=='female'),alternative='less'))
+\end_layout
+
+\begin_layout Plain Layout
+
+(fruM_stats[['S3B']]=oneway_test(cVA2~mut,data=subset(fruM_cells,cluster=='aSP-g
+' & sex=='female'),alternative='greater'))
+\end_layout
+
+\begin_layout Plain Layout
+
+(fruM_stats[['S3C']]=oneway_test(cVA2~mut,data=subset(fruM_cells,cluster=='aSP-h
+' & sex=='female'),alternative='less'))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# compare fruM female and wt male to see if there is any difference
+\end_layout
+
+\begin_layout Plain Layout
+
+oneway_test(cVA2~mut,data=subset(fruM_cells,cluster=='aSP-f' & mutSex!='wt
+ female'))
+\end_layout
+
+\begin_layout Plain Layout
+
+oneway_test(cVA2~mut,data=subset(fruM_cells,cluster=='aSP-h' & mutSex!='wt
+ female'))
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+And finally the (clonal) tra mutant cells (Figure 6)
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+tra_clusters_by_mut=lapply(sprintf("aSP-%s",c("f","g","h")),
+\end_layout
+
+\begin_layout Plain Layout
+
+	function(lhcluster) with(subset(tra_cells,cluster==lhcluster & sex=='female'),t
+able(mut,resp.cVA)))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+tra_stats=list()
+\end_layout
+
+\begin_layout Plain Layout
+
+# response fraction differs between tra mut and wt female aSP-f
+\end_layout
+
+\begin_layout Plain Layout
+
+(tra_stats[['P3A']]=chisq_test(tra_clusters_by_mut[[1]]))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# response fraction differs between tra mut and wt female aSP-g
+\end_layout
+
+\begin_layout Plain Layout
+
+(tra_stats[['P3B']]=chisq_test(tra_clusters_by_mut[[2]]))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+(tra_stats[['P3C']]=chisq_test(tra_clusters_by_mut[[3]]))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+(tra_stats[['S3A']]=oneway_test(cVA2~mut,data=subset(tra_cells,cluster=='aSP-f'
+ & sex=='female'),alternative='less'))
+\end_layout
+
+\begin_layout Plain Layout
+
+(tra_stats[['S3B']]=oneway_test(cVA2~mut,data=subset(tra_cells,cluster=='aSP-g'
+ & sex=='female'),alternative='greater'))
+\end_layout
+
+\begin_layout Plain Layout
+
+(tra_stats[['S3C']]=oneway_test(cVA2~mut,data=subset(tra_cells,cluster=='aSP-h'
+ & sex=='female'),alternative='less'))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# compare tra1 clone (in female) and wt male to see if there is any difference
+\end_layout
+
+\begin_layout Plain Layout
+
+oneway_test(cVA2~mut,data=subset(tra_cells,cluster=='aSP-f' & mutSex!='wt
+ female'))
+\end_layout
+
+\begin_layout Plain Layout
+
+oneway_test(cVA2~mut,data=subset(tra_cells,cluster=='aSP-h' & mutSex!='wt
+ female'))
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+pagestyle{empty}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+wide true
+sideways true
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+resizebox{
+\backslash
+columnwidth}{!}{%
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Tabular
+<lyxtabular version="3" rows="33" columns="10">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Sex-specific pheromone responses in 
+\emph on
+fru
+\series default
+\emph default
++
+\series bold
+ LHNs
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Cluster
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Group 1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Group 2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Figure
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Test
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Hypothesis
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Statistic
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+p
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+n
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="3" alignment="center" valignment="middle" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Proportion cVA-responsive
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-f
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+male 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1M
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+chi^2$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+chi^2$
+\end_layout
+
+\end_inset
+
+=
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+s(wt_stats[['P3A']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+ps(wt_stats[['P3A']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+n(wt_stats[['P3A']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-g
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+male 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1N
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+chi^2$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+chi^2$
+\end_layout
+
+\end_inset
+
+=
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+s(wt_stats[['P3B']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+ps(wt_stats[['P3B']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+n(wt_stats[['P3B']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-h
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+male 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1O
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+chi^2$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+chi^2$
+\end_layout
+
+\end_inset
+
+=
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+s(wt_stats[['P3C']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+ps(wt_stats[['P3C']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+n(wt_stats[['P3C']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="3" alignment="center" valignment="middle" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Magnitude cVA response
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-f
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+male 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1M
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+One way (permutation)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+mu_1 
+\backslash
+neq 
+\backslash
+mu_2$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Z=
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+s(wt_stats[['S3A']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+ps(wt_stats[['S3A']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+n(wt_stats[['S3A']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-g
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+male 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1N
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+One way (permutation)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+mu_1 
+\backslash
+neq 
+\backslash
+mu_2$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Z=
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+s(wt_stats[['S3B']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+ps(wt_stats[['S3B']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+n(wt_stats[['S3B']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-h
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+male 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1O
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+One way (permutation)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+mu_1 
+\backslash
+neq 
+\backslash
+mu_2$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Z=
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+s(wt_stats[['S3C']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+ps(wt_stats[['S3C']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+n(wt_stats[['S3C']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Compare Magnitude (cVA-responsive only)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-f,aSP-g
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-g female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-f male
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1M--O
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+One way (permutation)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+mu_1 
+\backslash
+neq 
+\backslash
+mu_2$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Z=
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+s(peak_3AB)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+ps(peak_3AB)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+n(peak_3AB)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Compare Sparseness (cVA-responsive only)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-f,aSP-g
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-g female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-f male
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2G
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Wilcoxon
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+mu_1 
+\backslash
+neq 
+\backslash
+mu_2$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Z=
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+s(S_3AB)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+ps(S_3AB)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+n(S_3AB)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Proportion cVA-responsive (unilateral vs bilateral)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-f
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-f uni male
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-f bilat male
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2H
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+chi^2$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+chi^2$
+\end_layout
+
+\end_inset
+
+=
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+s(wt_stats[['PBilat3A']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+ps(wt_stats[['PBilat3A']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+n(wt_stats[['PBilat3A']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Compare Magnitude (unilateral vs bilateral)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-f
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-f uni male
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-f bilat male
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2H
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+One way (permutation)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+mu_1 
+\backslash
+neq 
+\backslash
+mu_2$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Z=
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+s(wt_stats[['SBilat3A']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+ps(wt_stats[['SBilat3A']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+n(wt_stats[['SBilat3A']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+cVA responses in 
+\series default
+\emph on
+fru
+\series bold
+\emph default
++ LHNs depend on a common input
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="3" alignment="center" valignment="middle" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Proportion cVA-responsive
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-f
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+wt male 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+Or67d
+\emph on
+
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+-/-
+\end_layout
+
+\end_inset
+
+
+\shape default
+\emph default
+male
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3C
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+chi^2$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+chi^2$
+\end_layout
+
+\end_inset
+
+=
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+s(Or67d_stats[['aSP-f']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+ps(Or67d_stats[['aSP-f']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+n(Or67d_stats[['aSP-f']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-g
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+wt female 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+Or67d
+\emph on
+
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+-/-
+\end_layout
+
+\end_inset
+
+
+\shape default
+\emph default
+female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3C
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+chi^2$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+chi^2$
+\end_layout
+
+\end_inset
+
+=
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+s(Or67d_stats[['aSP-g']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+ps(Or67d_stats[['aSP-g']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+n(Or67d_stats[['aSP-g']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="3" alignment="center" valignment="middle" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Magnitude cVA response
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-f
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+wt male 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+Or67d
+\emph on
+
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+-/-
+\end_layout
+
+\end_inset
+
+
+\shape default
+\emph default
+male
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3C
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+One way (permutation)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+mu_1 > 
+\backslash
+mu_2$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Z=
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+s(Or67d_stats[['S3A']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+ps(Or67d_stats[['S3A']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+n(Or67d_stats[['S3A']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-g
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+wt female 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+Or67d
+\emph on
+
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+-/-
+\end_layout
+
+\end_inset
+
+
+\shape default
+\emph default
+female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3C
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+One way (permutation)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+mu_1 > 
+\backslash
+mu_2$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Z=
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+s(Or67d_stats[['S3B']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+ps(Or67d_stats[['S3B']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+n(Or67d_stats[['S3B']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Fru
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+M
+\end_layout
+
+\end_inset
+
+ is necessary for the male form of the switch
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Magnitude cVA response
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-f
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+wt male
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+fru
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+
+\emph on
+-/-
+\end_layout
+
+\end_inset
+
+
+\emph default
+male
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4C
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+One way (permutation)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+mu_1 > 
+\backslash
+mu_2$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Z=
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+s(fruf_s)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+ps(fruf_s)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+n(fruf_s)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Compare Sparseness (cVA-responsive only)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-f
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+wt male
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+fru
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+
+\emph on
+-/-
+\end_layout
+
+\end_inset
+
+
+\emph default
+male
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4D
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Wilcoxon
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+mu_1 
+\backslash
+neq 
+\backslash
+mu_2$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Z=
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+s(S_fruf)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+ps(S_fruf)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+n(S_fruf)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Fru
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+M
+\end_layout
+
+\end_inset
+
+ specifies the male form of the circuit switch
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="3" alignment="center" valignment="middle" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Proportion cVA-responsive
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-f
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+wt female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+fru
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+M 
+\end_layout
+
+\end_inset
+
+
+\emph default
+female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5H
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+chi^2$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+chi^2$
+\end_layout
+
+\end_inset
+
+=
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+s(fruM_stats[['P3A']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+ps(fruM_stats[['P3A']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+n(fruM_stats[['P3A']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-g
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+wt female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+fru
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+M 
+\end_layout
+
+\end_inset
+
+
+\emph default
+female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5H
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+chi^2$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+chi^2$
+\end_layout
+
+\end_inset
+
+=
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+s(fruM_stats[['P3B']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+ps(fruM_stats[['P3B']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+n(fruM_stats[['P3B']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-h
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+wt female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+fru
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+M 
+\end_layout
+
+\end_inset
+
+
+\emph default
+female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+S7C
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+chi^2$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+chi^2$
+\end_layout
+
+\end_inset
+
+=
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+s(fruM_stats[['P3C']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+ps(fruM_stats[['P3C']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+n(fruM_stats[['P3C']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="3" alignment="center" valignment="middle" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Magnitude cVA response
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-f
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+wt female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+fru
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+M 
+\end_layout
+
+\end_inset
+
+
+\emph default
+female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5H
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+One way (permutation)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+mu_1 < 
+\backslash
+mu_2$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Z=
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+s(fruM_stats[['S3A']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+ps(fruM_stats[['S3A']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+n(fruM_stats[['S3A']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-g
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+wt female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+fru
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+M 
+\end_layout
+
+\end_inset
+
+
+\emph default
+female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5H
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+One way (permutation)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+mu_1 > 
+\backslash
+mu_2$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Z=
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+s(fruM_stats[['S3B']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+ps(fruM_stats[['S3B']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+n(fruM_stats[['S3B']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-h
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+wt female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+fru
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+M 
+\end_layout
+
+\end_inset
+
+
+\emph default
+female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+S7C
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+One way (permutation)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+mu_1 < 
+\backslash
+mu_2$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Z=
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+s(fruM_stats[['S3C']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+ps(fruM_stats[['S3C']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+n(fruM_stats[['S3C']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Selectively masculinising 
+\emph on
+fru
+\emph default
++ LHNs can flip the switch
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="3" alignment="center" valignment="middle" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Proportion cVA-responsive
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-f
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+wt female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+tra
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+
+\emph on
+1
+\end_layout
+
+\end_inset
+
+
+\emph default
+ female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6H
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+chi^2$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+chi^2$
+\end_layout
+
+\end_inset
+
+=
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+s(tra_stats[['P3A']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+ps(tra_stats[['P3A']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+n(tra_stats[['P3A']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-g
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+wt female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+tra
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+
+\emph on
+1
+\end_layout
+
+\end_inset
+
+
+\emph default
+ female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6H
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+chi^2$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+chi^2$
+\end_layout
+
+\end_inset
+
+=
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+s(tra_stats[['P3B']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+ps(tra_stats[['P3B']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+n(tra_stats[['P3B']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-h
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+wt female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+tra
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+
+\emph on
+1
+\end_layout
+
+\end_inset
+
+
+\emph default
+ female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+S7G
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+chi^2$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+chi^2$
+\end_layout
+
+\end_inset
+
+=
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+s(tra_stats[['P3C']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+ps(tra_stats[['P3C']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+n(tra_stats[['P3C']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="3" alignment="center" valignment="middle" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Magnitude cVA response
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-f
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+wt female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+tra
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+
+\emph on
+1
+\end_layout
+
+\end_inset
+
+
+\emph default
+ female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6H
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+One way (permutation)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+mu_1 < 
+\backslash
+mu_2$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Z=
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+s(tra_stats[['S3A']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+ps(tra_stats[['S3A']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+n(tra_stats[['S3A']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-g
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+wt female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+tra
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+
+\emph on
+1
+\end_layout
+
+\end_inset
+
+
+\emph default
+ female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6H
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+One way (permutation)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+mu_1 > 
+\backslash
+mu_2$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Z=
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+s(tra_stats[['S3B']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+ps(tra_stats[['S3B']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+n(tra_stats[['S3B']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aSP-h
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+wt female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+tra
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+
+\emph on
+1
+\end_layout
+
+\end_inset
+
+
+\emph default
+ female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+S7G
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+One way (permutation)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+mu_1 < 
+\backslash
+mu_2$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Z=
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+s(tra_stats[['S3C']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+ps(tra_stats[['S3C']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex S/R expression
+status collapsed
+
+\begin_layout Plain Layout
+
+n(tra_stats[['S3C']])
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
