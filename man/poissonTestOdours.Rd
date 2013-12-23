@@ -14,6 +14,9 @@
 
   \item{maxtrials}{Maximum number of trials to consider
   (default => all)}
+
+  \item{...}{Additional parameters passed to
+  \code{poisson.test} #'}
 }
 \description{
   Carry out poisson test on absolute number of spikes in
