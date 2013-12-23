@@ -11,6 +11,7 @@
 \geometry{verbose,tmargin=3cm,bmargin=3cm,lmargin=3cm,rmargin=3cm}
 \usepackage{array}
 \usepackage{rotfloat}
+\usepackage{url}
 \usepackage{multirow}
 
 \makeatletter
@@ -19,19 +20,50 @@
 %% Because html converters don't know tabularnewline
 \providecommand{\tabularnewline}{\\}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+%\VignetteIndexEntry{Statistical Analysis of Neuronal Responses}
+
 \makeatother
 
 \usepackage{babel}
 \begin{document}
+
+\title{Statistical Analysis of Neuronal Responses}
+
+
+\author{Gregory Jefferis, Johannes Kohl, Aaron Ostrovsky, Shahar Frechter}
+\maketitle
+\begin{abstract}
+This vignette includes the complete statistical analysis of LHN responses
+culminating in the regeneration of the Supplemental Table 1C.
+\end{abstract}
+
+\section{Installation}
+
+You will need to install my package \texttt{gphys} in order to be
+able to run some of these examples. This is presently only available
+at \url{https://github.com/jefferis/gphys} i.e. not on CRAN but it
+is relatively mature. There are full instructions on the github site,
+but the simplest approach is:
+
+<<install, eval=FALSE>>=
+install.packages("gphys",repos='http://jefferislab.org/R',type='source')
+@
+
 <<setup, include=FALSE, cache=FALSE>>=
 library(knitr)
 library(frulhns)
 library(gphys)
 library(coin)
+library(ggplot2)
 # this is equivalent to \SweaveOpts{...}
-opts_chunk$set(fig.path='figure/minimal-', fig.align='center', fig.show='hold')
-options(replace.assign=TRUE,width=55)
+opts_chunk$set(fig.path='figure/minimal-', fig.align='center', fig.show='hold', cache=TRUE,
+width.cutoff=55)
+options(replace.assign=TRUE,width=60,tidy=TRUE,reindent.spaces=2)
 @
+
+
+\section{Significant Responses}
 
 Calculate response statistics for every cell/odour pair using \texttt{poissonTestOdours()}
 function, which does a Poisson test on the absolute number of spikes
@@ -40,6 +72,9 @@ in response to a given odour and corresponding blank.
 <<response_stats>>=
 pvals.poisson=t(sapply(asr,poissonTestOdours,maxtrials=4,alternative='greater'))
 @
+
+
+\section{Data Subsets}
 
 Make data subsets for each figure
 
@@ -96,10 +131,18 @@ levels(tra_cells$mutSex)=c("wt F","tra F","wt M")
 
 @
 
-Define some utility functions
+
+\section{Full Analysis}
+
+
+\subsection{Utility Functions}
+
+First define some utility functions for convenience
 
 <<utilfuns>>=
+#' short name for function extracting statistic from COIN results
 s=statistic
+#' 
 p=function(...) format.pval(pvalue(...),digits=2)
 stars <- function(pv) symnum(pv, corr = FALSE, na = FALSE, cutpoints = c(0, 0.001, 0.01, 0.05, 0.1, 1),symbols = c("***", "**", "*", ".", " "))
 
@@ -117,10 +160,13 @@ n<-function(s) {
 }
 @
 
+
+\subsection{Wild type cells}
+
 Ok now lets calculate the stats that we need. First we'll look at
 the wild type cells.
 
-<<>>=
+<<wt_stats>>=
 wt_stats=list()
 # response fraction differences between wt male and female
 wtclusters_by_sex=lapply(sprintf("aSP-%s",c("f","g","h")),function(lhcluster) with(subset(wt_cells,cluster==lhcluster),table(sex,resp.cVA)))
@@ -140,20 +186,22 @@ Let's compare the peak response frequency of male aSP-f and female
 aSP-g neurons. First calculate the peak frequencies across multiple
 bins:
 
-<<>>==
+<<peak_freq5 tidy=FALSE>>==
 wt.genos<-c('fru','JK56','JK1029')
 windows<-seq(from=2150,by=200,length=5)
 
 # restrict to cVA 
-wt.asp_fg.cVA=subset(fixedUseful,shortGenotype%in%wt.genos&resp.cVA==T & cluster%in%c('aSP-f','aSP-g'))
+wt.asp_fg.cVA=subset(fixedUseful,shortGenotype%in%wt.genos&resp.cVA==T
+  & cluster%in%c('aSP-f','aSP-g'))
 
 # Find the mean number of spikes in 200ms bins starting from 1 second
 for(cell in rownames(wt.asp_fg.cVA)){
   message("Summarising spikes for cell: ",cell)
   cVAspikes=subset(allspikes[[cell]],'cVA')
   for (window in windows){
-    wt.asp_fg.cVA[cell,as.character(window)]= 
-      mean(OdourResponseFromSpikes(cVAspikes,response=c(window,window+200),base=c(0,2000),freq=T)$cVA)
+    wt.asp_fg.cVA[cell,as.character(window)]= mean(
+      OdourResponseFromSpikes(cVAspikes,response=c(window,window+200),
+        base=c(0,2000),freq=T)$cVA)
   }
 }
 
@@ -172,21 +220,20 @@ peak_responses=with(wt.asp_fg.cVA,
 Now we can find the peak frequency for each neuron from the 5 bins
 under consideration.
 
-<<>>=
+<<peak_peak_freq>>=
 # for each neuron, find max response for each of 5 bins under consideration
 # then take median of that per group
 windows<-seq(from=2150,by=200,length=5)
 peak_responses=with(wt.asp_fg.cVA, by(wt.asp_fg.cVA[,as.character(windows)],list(cluster,sex),function(x) median(apply(x,1,function(x) max(x,na.rm=T)))))
 peak_responses
 peak_3AB=oneway_test(`2150`~sex,data=wt.asp_fg.cVA)
-require(ggplot2)
 qplot(`2150`,data=wt.asp_fg.cVA,fill=sex,col=resp.cVA)
 @
 
 Now compare sparseness of male aSP-f and female aSP-g neurons, only
 considering cVA responders.
 
-<<>>=
+<<wt_sparseness>>=
 d=subset(wt_cells,!is.na(S) & (cluster=='aSP-f' & sex=='male') | (cluster=='aSP-g' & sex=='female') & resp.cVA)
 S_3AB=wilcox_test(S~clustersex,droplevels(d))
 @
@@ -194,7 +241,7 @@ S_3AB=wilcox_test(S~clustersex,droplevels(d))
 We noticed that cVA responses were weaker and less frequent from bilateral
 male 3A neurons
 
-<<>>=
+<<laterality_response_strength>>=
 bilat_cells=structure(c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,  FALSE, FALSE, FALSE, TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, FALSE,  TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE,  FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE), .Names = c("nm20110907c3", "nm20110908c0", "nm20110911c0",  "nm20110911c4", "nm20110911c5", "nm20110913c0", "nm20110914c4",  "nm20120308c0", "nm20120417c0", "nm20120418c0", "nm20120420c1",  "nm20120423c4", "nm20120502c2", "nm20111011c0", "nm20120404c0",  "nm20120810c0", "nm20120811c2", "nm20120811c3", "nm20120811c1",  "nm20120812c1", "nm20120812c2", "nm20120814c2", "nm20120814c0",  "nm20120815c4", "nm20120816c2", "nm20120817c0", "nm20120925c2",  "nm20121127c2", "nm20121127c3", "nm20121130c3", "nm20120818c2",  "nm20120402c0", "nm20120813c1", "nm20120811c4", "nm20120813c0",  "nm20120814c1", "nm20120817c2",'nm20121130c2'))
 wt_cells$bilat=NA
 wt_cells[names(bilat_cells),'bilat']=bilat_cells
@@ -202,9 +249,12 @@ wt_stats[['SBilat3A']]=oneway_test(cVA2~factor(bilat),data=subset(wt_cells,clust
 wt_stats[['PBilat3A']]=chisq_test(with(subset(wt_cells,cluster=='aSP-f' & sex=='male'),table(bilat,resp.cVA)))
 @
 
-Now for the Or67d mutant cells (Figure 2)
 
-<<>>=
+\subsection{Or67d mutant cells}
+
+Now for the Or67d mutant cells (Figure 3)
+
+<<Or67d>>=
 Or67d_clusters_bymut=lapply(sprintf("aSP-%s",c("f","g")),
 	function(lhcluster) with(subset(Or67d_cells,cluster==lhcluster),table(mut,resp.cVA)))
 
@@ -220,9 +270,12 @@ Or67d_stats[['aSP-g']]=chisq_test(Or67d_clusters_bymut[[2]])
 
 @
 
+
+\subsection{fru\textsuperscript{-/-} mutant cells}
+
 Now for the fru-/- mutant cells (Figure 4)
 
-<<>>=
+<<frulof>>=
 fruf_stats=list()
 # response fraction differs between fruf and wt male 3A neurons
 (fruf_p=chisq_test(tbl2<-with(subset(frufdata,sex=='male'),table(mut,resp.cVA))))
@@ -241,14 +294,17 @@ fruf_stats=list()
 Now compare sparseness of wt male aSP-f and mutant aSP-f neurons,
 only considering cVA responders.
 
-<<>>=
+<<frulof_sparseness>>=
 d=subset(frufdata,!is.na(S) & cluster=='aSP-f' & sex=='male' & resp.cVA)
 S_fruf=wilcox_test(S~mut,droplevels(d))
 @
 
+
+\subsection{fru\textsuperscript{M} mutant cells}
+
 Now for the fruM mutant cells (Figure 5)
 
-<<>>=
+<<fruM>>=
 
 fruM_clusters_by_mut=lapply(sprintf("aSP-%s",c("f","g","h")),
 	function(lhcluster) with(subset(fruM_cells,cluster==lhcluster & sex=='female'),table(mut,resp.cVA)))
@@ -272,9 +328,12 @@ oneway_test(cVA2~mut,data=subset(fruM_cells,cluster=='aSP-f' & mutSex!='wt femal
 oneway_test(cVA2~mut,data=subset(fruM_cells,cluster=='aSP-h' & mutSex!='wt female'))
 @
 
+
+\subsection{tra MARCM mutant cells}
+
 And finally the (clonal) tra mutant cells (Figure 6)
 
-<<>>=
+<<tra>>=
 tra_clusters_by_mut=lapply(sprintf("aSP-%s",c("f","g","h")),
 	function(lhcluster) with(subset(tra_cells,cluster==lhcluster & sex=='female'),table(mut,resp.cVA)))
 
@@ -296,7 +355,11 @@ oneway_test(cVA2~mut,data=subset(tra_cells,cluster=='aSP-f' & mutSex!='wt female
 oneway_test(cVA2~mut,data=subset(tra_cells,cluster=='aSP-h' & mutSex!='wt female'))
 @
 
-\newpage{}
+
+\subsection{Summary table}
+
+Having computed all of those statistics, let's assemble them into
+a single summary table, Table S1C from the paper.\newpage{}
 
 \pagestyle{empty}
 
