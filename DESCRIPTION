@@ -9,11 +9,12 @@ Version: 0.1
 Author: Gregory Jefferis
 Maintainer: Gregory Jefferis <jefferis@mrc-lmb.cam.ac.uk>
 Depends:
-    coin,
     R (>= 3.0.2)
 License: GPL-3
 Suggests:
-    knitr
+    knitr,
+    coin,
+    rgl
 VignetteBuilder: knitr
 LazyData: true
 Collate:
