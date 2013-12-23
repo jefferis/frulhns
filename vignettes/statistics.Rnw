@@ -27,21 +27,23 @@
 library(knitr)
 library(frulhns)
 library(gphys)
+library(coin)
 # this is equivalent to \SweaveOpts{...}
 opts_chunk$set(fig.path='figure/minimal-', fig.align='center', fig.show='hold')
 options(replace.assign=TRUE,width=55)
-library(coin)
 @
 
-Calculate response stats
+Calculate response statistics for every cell/odour pair using \texttt{poissonTestOdours()}
+function, which does a Poisson test on the absolute number of spikes
+in response to a given odour and corresponding blank.
 
-<<>>=
-data('response_data',package='frulhns')
+<<response_stats>>=
 pvals.poisson=t(sapply(asr,poissonTestOdours,maxtrials=4,alternative='greater'))
-@Make data subsets for each figure
+@
 
-<<include=FALSE>>=
-data('fixedUseful',package='frulhns')
+Make data subsets for each figure
+
+<<data_subsets>>=
 wt_cells=subset(fixedUseful,shortGenotype %in%c("fru","JK1029",'JK56'))
 
 wt_cells$resp.sumAll=apply(pvals.poisson[wt_cells$'Igor file',],1,function(x) sum(x<0.05,na.rm=T))
@@ -96,7 +98,7 @@ levels(tra_cells$mutSex)=c("wt F","tra F","wt M")
 
 Define some utility functions
 
-<<>>=
+<<utilfuns>>=
 s=statistic
 p=function(...) format.pval(pvalue(...),digits=2)
 stars <- function(pv) symnum(pv, corr = FALSE, na = FALSE, cutpoints = c(0, 0.001, 0.01, 0.05, 0.1, 1),symbols = c("***", "**", "*", ".", " "))
@@ -114,7 +116,6 @@ n<-function(s) {
   }
 }
 @
-
 
 Ok now lets calculate the stats that we need. First we'll look at
 the wild type cells.

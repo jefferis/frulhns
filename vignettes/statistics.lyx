@@ -138,12 +138,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-data('response_data',package='frulhns')
+<<response_stats>>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -158,6 +153,10 @@ pvals.poisson=t(sapply(asr,poissonTestOdours,maxtrials=4,alternative='greater'))
 
 \end_inset
 
+
+\end_layout
+
+\begin_layout Standard
 Make data subsets for each figure
 \end_layout
 
@@ -167,7 +166,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<include=FALSE>>=
+<<data_subsets>>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -436,7 +435,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<>>=
+<<utilfuns>>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -522,10 +521,6 @@ n<-function(s) {
 \begin_layout Plain Layout
 
 @
-\end_layout
-
-\begin_layout Plain Layout
-
 \end_layout
 
 \end_inset
