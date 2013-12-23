@@ -1,0 +1,52 @@
+%% LyX 2.0.5 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[british]{article}
+\usepackage{mathptmx}
+\usepackage{helvet}
+\usepackage{courier}
+\renewcommand{\familydefault}{\rmdefault}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\geometry{verbose,tmargin=3cm,bmargin=3cm,lmargin=3cm,rmargin=3cm}
+\usepackage{babel}
+\begin{document}
+<<setup, include=FALSE, cache=FALSE>>=
+library(knitr)
+library(frulhns)
+# this is equivalent to \SweaveOpts{...}
+opts_chunk$set(fig.path='figure/minimal-', fig.align='center', fig.show='hold',fig.height=3,fig.width=3)
+options(replace.assign=TRUE,width=55)
+# so that we can make snapshots from rgl plots
+knit_hooks$set(custom.plot = hook_rgl)
+tryCatch({
+	source(getOption('gjanalysissuite.startup'),keep.source=TRUE)
+},error = function(e) {
+	stop("Please install AnalysisSuite from https://github.com/jefferis/AnalysisSuite")
+})
+@
+
+Let's start by plotting a single neurons before registration
+
+<<single-neuron-raw, custom.plot=TRUE>>=
+open3d()
+plot3d(jknraw[[1]])
+@
+
+First 10 neurons
+
+<<first-10-neurons-raw, custom.plot=TRUE>>=
+clear3d()
+plot3d(jknraw[1:10],col=rainbow,WithNodes=FALSE)
+@
+
+Now looking at multiple neurons before registration doesn't make much
+sense, so let's try again using the registered neurons
+
+<<first-10-neurons, custom.plot=TRUE>>=
+clear3d()
+plot3d(jkn[1:10],col=rainbow,WithNodes=FALSE)
+@
+
+We can already see that those neurons are more tightly distributed.
+\end{document}
