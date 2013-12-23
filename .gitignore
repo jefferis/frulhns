@@ -3,3 +3,5 @@
 .RData
 *.lyx~
 *.lyx#
+vignettes/cache
+vignettes/figure
