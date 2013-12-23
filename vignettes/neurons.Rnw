@@ -35,7 +35,9 @@ options(replace.assign=TRUE,width=55)
 # so that we can make snapshots from rgl plots
 knit_hooks$set(custom.plot = hook_rgl)
 tryCatch({
-	source(getOption('gjanalysissuite.startup'),keep.source=TRUE)
+	as.loc=getOption('gjanalysissuite.startup')
+	if(is.null(as.loc)) as.loc=normalizePath("~/projects/AnalysisSuite/R/Code/Startup.R")
+	source(as.loc,keep.source=TRUE)
 },error = function(e) {
 	stop("Please install AnalysisSuite from https://github.com/jefferis/AnalysisSuite")
 })
@@ -77,4 +79,30 @@ plot3d(jkn[1:10],col=rainbow,WithNodes=FALSE)
 @
 
 We can already see that those neurons are more tightly distributed.
+However it's not really too clear how they relate to the structure
+of the brain. Let's define a quick function to plot a brain surface.
+
+<<IS2Surf>>=
+#' Use rgl to plot a 3d surface of the brain
+#' 
+#' @param alpha Alpha value for surface
+#' @param col Colour of surface
+#' @param ... Additional parameters passed to \code{plot3dsurface}
+#' @export
+#' @examples
+#' @seealso \code{plot3dsurface} in \code{AnalysisSuite} code bundle.
+#' is2surf()
+#' is2surf(alpha=0.4,col='cyan')
+is2surf<-function(alpha=0.2,col='grey',...){
+  plot3dsurface("Exterior",d=IS2Surf,col=col,alpha=alpha,...)
+}
+@
+
+Now we can use that to provide some context:
+
+<<first-10-neurons-brain, custom.plot=TRUE>>=
+clear3d()
+is2surf()
+plot3d(jkn[1:10],col=rainbow,WithNodes=FALSE)
+@
 \end{document}

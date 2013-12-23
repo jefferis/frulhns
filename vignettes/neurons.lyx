@@ -113,8 +113,8 @@ SweaveOpts{...}
 
 \begin_layout Plain Layout
 
-opts_chunk$set(fig.path='figure/minimal-', fig.align='center', fig.show='hold',fig.h
-eight=3,fig.width=3)
+opts_chunk$set(fig.path='figure/minimal-',fig.align='center',fig.show='hold',fig.hei
+ght=3,fig.width=4,out.height='3in',out.width='4in')
 \end_layout
 
 \begin_layout Plain Layout
@@ -139,7 +139,18 @@ tryCatch({
 
 \begin_layout Plain Layout
 
-	source(getOption('gjanalysissuite.startup'),keep.source=TRUE)
+	as.loc=getOption('gjanalysissuite.startup')
+\end_layout
+
+\begin_layout Plain Layout
+
+	if(is.null(as.loc)) as.loc=normalizePath("~/projects/AnalysisSuite/R/Code/Startup.R
+")
+\end_layout
+
+\begin_layout Plain Layout
+
+	source(as.loc,keep.source=TRUE)
 \end_layout
 
 \begin_layout Plain Layout
@@ -317,6 +328,138 @@ plot3d(jkn[1:10],col=rainbow,WithNodes=FALSE)
 
 \begin_layout Standard
 We can already see that those neurons are more tightly distributed.
+ However it's not really too clear how they relate to the structure of the
+ brain.
+ Let's define a quick function to plot a brain surface.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<IS2Surf>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+#' Use rgl to plot a 3d surface of the brain
+\end_layout
+
+\begin_layout Plain Layout
+
+#' 
+\end_layout
+
+\begin_layout Plain Layout
+
+#' @param alpha Alpha value for surface
+\end_layout
+
+\begin_layout Plain Layout
+
+#' @param col Colour of surface
+\end_layout
+
+\begin_layout Plain Layout
+
+#' @param ...
+ Additional parameters passed to 
+\backslash
+code{plot3dsurface}
+\end_layout
+
+\begin_layout Plain Layout
+
+#' @export
+\end_layout
+
+\begin_layout Plain Layout
+
+#' @examples
+\end_layout
+
+\begin_layout Plain Layout
+
+#' @seealso 
+\backslash
+code{plot3dsurface} in 
+\backslash
+code{AnalysisSuite} code bundle.
+\end_layout
+
+\begin_layout Plain Layout
+
+#' is2surf()
+\end_layout
+
+\begin_layout Plain Layout
+
+#' is2surf(alpha=0.4,col='cyan')
+\end_layout
+
+\begin_layout Plain Layout
+
+is2surf<-function(alpha=0.2,col='grey',...){
+\end_layout
+
+\begin_layout Plain Layout
+
+  plot3dsurface("Exterior",d=IS2Surf,col=col,alpha=alpha,...)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Now we can use that to provide some context:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<first-10-neurons-brain, custom.plot=TRUE, dev='png', dpi=300>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+clear3d()
+\end_layout
+
+\begin_layout Plain Layout
+
+is2surf()
+\end_layout
+
+\begin_layout Plain Layout
+
+plot3d(jkn[1:10],col=rainbow,WithNodes=FALSE)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \end_body
