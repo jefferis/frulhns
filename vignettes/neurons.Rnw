@@ -9,8 +9,23 @@
 \usepackage[utf8]{inputenc}
 \usepackage{geometry}
 \geometry{verbose,tmargin=3cm,bmargin=3cm,lmargin=3cm,rmargin=3cm}
+\usepackage{url}
 \usepackage{babel}
 \begin{document}
+
+\title{Plotting traced Lateral Horn Neurons (LHNs)}
+
+
+\author{Gregory Jefferis, Johannes Kohl, Aaron Ostrovsky, Shahar Frechter}
+\maketitle
+\begin{abstract}
+This vignette shows some examples of how to use neuronal tracings
+in combination with GJ's AnalysisSuite R code to analyse the structure
+of lateral horn neurons in this study.
+\end{abstract}
+
+\section{Installation }
+
 <<setup, include=FALSE, cache=FALSE>>=
 library(knitr)
 library(frulhns)
@@ -26,7 +41,20 @@ tryCatch({
 })
 @
 
-Let's start by plotting a single neurons before registration
+Before running this vignette, it is necessary to install some R code
+available at \url{https://github.com/jefferis/AnalysisSuite}. There
+are detailed instructions on that page, but the long and the short
+of it is that the quickest method is to run the following code in
+an interactive session:
+
+<<install-instructions, eval=FALSE>>=
+source("http://flybrain.mrc-lmb.cam.ac.uk/R/AnalysisSuite/WebInstall.R")
+@
+
+
+\section{Basic Plots}
+
+Let's start by plotting a single neuron before registration
 
 <<single-neuron-raw, custom.plot=TRUE>>=
 open3d()

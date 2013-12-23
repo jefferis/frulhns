@@ -67,6 +67,24 @@ knitr
 
 \begin_body
 
+\begin_layout Title
+Plotting traced Lateral Horn Neurons (LHNs)
+\end_layout
+
+\begin_layout Author
+Gregory Jefferis, Johannes Kohl, Aaron Ostrovsky, Shahar Frechter
+\end_layout
+
+\begin_layout Abstract
+This vignette shows some examples of how to use neuronal tracings in combination
+ with GJ's AnalysisSuite R code to analyse the structure of lateral horn
+ neurons in this study.
+\end_layout
+
+\begin_layout Section
+Installation 
+\end_layout
+
 \begin_layout Standard
 \begin_inset ERT
 status open
@@ -151,7 +169,54 @@ e")
 \end_layout
 
 \begin_layout Standard
-Let's start by plotting a single neurons before registration
+Before running this vignette, it is necessary to install some R code available
+ at 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://github.com/jefferis/AnalysisSuite
+\end_layout
+
+\end_inset
+
+.
+ There are detailed instructions on that page, but the long and the short
+ of it is that the quickest method is to run the following code in an interactiv
+e session:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<install-instructions, eval=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+source("http://flybrain.mrc-lmb.cam.ac.uk/R/AnalysisSuite/WebInstall.R")
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Basic Plots
+\end_layout
+
+\begin_layout Standard
+Let's start by plotting a single neuron before registration
 \end_layout
 
 \begin_layout Standard
