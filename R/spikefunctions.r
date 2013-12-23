@@ -5,7 +5,8 @@
 #' @param x An m x n odour response matrix for m trials of n odours
 #' @param odours Names of odours (defaults to \code{colnames(x)})
 #' @param maxtrials Maximum number of trials to consider (default => all)
-#' @export
+#' @param ... Additional parameters passed to \code{poisson.test}
+#' #' @export
 #' @seealso \code{\link{poisson.test}}
 poissonTestOdours<-function(x,odours=colnames(x),maxtrials=NA,...){
   nonblank=setdiff(odours,'blank')
