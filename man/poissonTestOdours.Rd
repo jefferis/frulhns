@@ -5,8 +5,26 @@
   poissonTestOdours(x, odours = colnames(x),
     maxtrials = NA, ...)
 }
+\arguments{
+  \item{x}{An m x n odour response matrix for m trials of n
+  odours}
+
+  \item{odours}{Names of odours (defaults to
+  \code{colnames(x)})}
+
+  \item{maxtrials}{Maximum number of trials to consider
+  (default => all)}
+}
 \description{
   Carry out poisson test on absolute number of spikes in
   odour response
+}
+\details{
+  It is assumed that x contains one column called
+  \code{"blank"}, against which the other columns will all
+  be tested.
+}
+\seealso{
+  \code{\link{poisson.test}}
 }
 
