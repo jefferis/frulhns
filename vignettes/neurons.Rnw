@@ -30,7 +30,7 @@ of lateral horn neurons in this study.
 library(knitr)
 library(frulhns)
 # this is equivalent to \SweaveOpts{...}
-opts_chunk$set(fig.path='figure/minimal-', fig.align='center', fig.show='hold',fig.height=3,fig.width=3)
+opts_chunk$set(fig.path='figure/minimal-',fig.align='center',fig.show='hold',fig.height=3,fig.width=4,out.height='3in',out.width='4in')
 options(replace.assign=TRUE,width=55)
 # so that we can make snapshots from rgl plots
 knit_hooks$set(custom.plot = hook_rgl)
@@ -100,7 +100,7 @@ is2surf<-function(alpha=0.2,col='grey',...){
 
 Now we can use that to provide some context:
 
-<<first-10-neurons-brain, custom.plot=TRUE>>=
+<<first-10-neurons-brain, custom.plot=TRUE, dev='png', dpi=300>>=
 clear3d()
 is2surf()
 plot3d(jkn[1:10],col=rainbow,WithNodes=FALSE)
