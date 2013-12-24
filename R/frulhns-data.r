@@ -27,7 +27,7 @@ NULL
 #' 
 #' @references Cachero S., Ostrovsky A.D., Yu J.Y., Dickson B.J., and Jefferis
 #' G.S.X.E. (2010). Sexual dimorphism in the fly brain. Curr Biol 20 (18),
-#' 1589–601.
+#' 1589-601.
 #' @name IS2Surf
 #' @docType data
 #' @examples
