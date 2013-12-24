@@ -5,7 +5,7 @@ Description: Traced neurons and summary statistical data to accompany:
     brains Cell, Volume 155, Issue 7, 1610-1623, 19 December 2013
     doi:10.1016/j.cell.2013.11.025 Johannes Kohl*, Aaron D. Ostrovsky*, Shahar
     Frechter, Gregory S.X.E. Jefferis
-Version: 0.1
+Version: 0.2
 Author: Gregory Jefferis
 Maintainer: Gregory Jefferis <jefferis@mrc-lmb.cam.ac.uk>
 Depends:
@@ -14,9 +14,12 @@ License: GPL-3
 Suggests:
     knitr,
     coin,
-    rgl
+    rgl,
+    ggplot2,
+    gphys
 VignetteBuilder: knitr
 LazyData: true
 Collate:
     'frulhns-package.r'
     'spikefunctions.r'
+    'frulhns-data.r'
