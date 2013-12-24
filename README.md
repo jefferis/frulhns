@@ -13,7 +13,14 @@ Johannes Kohl\*, Aaron D. Ostrovsky\*, Shahar Frechter, Gregory S.X.E. Jefferis
 Currently there isn't a released version on [CRAN](http://cran.r-project.org/) so copy/paste the instructions under **Bleeding Edge** carefully.
 
 ### Dependencies
-See DESCRIPTION. In order to build the vignettes, which are one of the main reasons for crearing this package, several additional packages are required including knitr, my [gphys](https://github.com/jefferis/gphys) package and coin. Following standard practice, these packages are listed under the Suggested field of the DESCRIPTION file. They can be installed when `dependencies=TRUE` is supplied as an installation option with the exception of packages not available on [CRAN](http://cran.r-project.org/).
+See DESCRIPTION. In order to build the vignettes, which are one of the main reasons 
+for creating this package, several additional packages are required including 
+[knitr](http://yihui.name/knitr/), my [gphys](https://github.com/jefferis/gphys) 
+package and [coin](cran.r-project.org/package=coin). Following standard practice, 
+these packages are listed under the Suggested field of the DESCRIPTION file. 
+They can be installed when `dependencies=TRUE` is supplied as an installation 
+option with the exception of packages not available on [CRAN](http://cran.r-project.org/).
+
 ### Released versions
 The recommendation _will_ be to install from our lab repository:
 
@@ -35,7 +42,9 @@ install_github("gphys", "jefferis")
 install_github("frulhns", "jefferis", dependencies=TRUE)
 ```
 
-Note: Windows users need [Rtools](http://www.murdoch-sutherland.com/Rtools/) and [devtools](http://CRAN.R-project.org/package=devtools) to install this way.
+Note: Windows users need [Rtools](http://www.murdoch-sutherland.com/Rtools/) and 
+[devtools](http://CRAN.R-project.org/package=devtools) to install this way.
+
 ## FIXME
 There is currently one major problem with vignette building. The neuroanatomical 
 analysis depends on my [AnalysisSuite](https://github.com/jefferis/AnalysisSuite) 
