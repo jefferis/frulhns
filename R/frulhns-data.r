@@ -1,9 +1,21 @@
 #' jknraw and jkn lists of Lateral Horn Neurons
 #' 
-#' These R lists contain 196 traced lateral horn neurons before (jknraw) and
-#' after (jkn) registration to the IS2 template brain.
+#' These R lists contain 196 traced lateral horn neurons before (jknraw) and 
+#' after (jkn) registration to the IS2 template brain. They lists are of 
+#' superclass \code{neuronlist} for which numerous functions are defined in the 
+#' AnalysisSuite package. The individual objects are of class neuron. Again
+#' there are a number of functions defined for plotting/analysis in AnalysisSuite.
 #' @name jkn
 #' @docType data
+#' @examples
+#' \dontrun{
+#' library(rgl)
+#' plot3d(jkn[[1]])
+#' plot3d(jkn[1:10],col='red')
+#' plot3d(jkn[1:10],col=rainbow)
+#' plot3d(jkn,subset=cluster=='aSP-f' & shortGenotype=="JK1029",
+#'   col=sex, WithNodes=F)
+#' }
 NULL
 
 #' @name jknraw
@@ -27,7 +39,7 @@ NULL
 
 #' List containing spiking data for all 288 lateral horn neurons in the paper
 #' 
-#' Each element in the list is a \code{\link{spiketimes}} object containing all 
+#' Each element in the list is a \code{spiketimes} object containing all 
 #' the spiking responses to a single recorded neuron. The spikes were extracted 
 #' in Igor Pro + Neuromatic as described in the Supplemental Experimental 
 #' Procedures of the paper. They were then read into R and post-processed using 
@@ -35,10 +47,37 @@ NULL
 #' names, stimulus duration, odour delivery device channel etc.)
 #' @name allspikes
 #' @docType data
-#' @seealso \code{\link{spiketimes}}
+#' @seealso \code{\link{spiketimes}, \link{fixedUseful}}
 #' @examples
 #' \dontrun{
 #' str(allspikes[[1]])
 #' attr(allspikes[[1]],'oddconf')[,1:4]
 #' }
+NULL
+
+#' Dataframe combining cell metadata and odours response summaries for 254 LHNs
+#' 
+#' Each row is a neuron whose electrophysiological data met quality thesholds.
+#' In contrast to \code{\link{allspikes}} these data do not include cells that
+#' from direct glomerular stimulation experiemnts.
+#' @name fixedUseful
+#' @docType data
+#' @seealso \code{\link{asr}, \link{allspikes}}
+NULL
+
+#' Absolute spike response to odours for 254 LHNs
+#' 
+#' Each element of the list corresponds to a single neuron and contains an m x n
+#' numeric matrix of spike counts for m trials in response to n odours. The
+#' basic data block is defined by \code{OdourResponseFromSpikes}
+#' @name asr
+#' @docType data
+#' @examples
+#' # summary of number of spikes in 500 ms bin for each odour
+#' summary(asr[[1]])
+#' # 7 sweeps for some odours
+#' nrow(asr[[1]])
+#' # number of sweeps per odour
+#' colSums(!is.na(asr[[1]]))
+#' @seealso \code{\link{fixedUseful}}
 NULL
