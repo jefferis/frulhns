@@ -5,8 +5,8 @@
 \description{
   Each row is a neuron whose electrophysiological data met
   quality thesholds. In contrast to \code{\link{allspikes}}
-  these data do not include cells that from direct
-  glomerular stimulation experiemnts.
+  these data do not include cells from direct glomerular
+  stimulation experiments.
 }
 \seealso{
   \code{\link{asr}, \link{allspikes}}
