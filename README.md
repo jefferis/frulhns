@@ -42,7 +42,7 @@ install_github("gphys", "jefferis")
 install_github("frulhns", "jefferis", dependencies=TRUE)
 ```
 
-Note: Windows users need [Rtools](http://www.murdoch-sutherland.com/Rtools/) and 
+Note: Windows users need [Rtools](http://www.murdoch-sutherland.com/Rtools/) in addition to 
 [devtools](http://CRAN.R-project.org/package=devtools) to install this way.
 
 ## FIXME
@@ -52,5 +52,7 @@ codebase which is not yet a formal package. This makes it surprisingly hard to
 locate the source code post-installation. My usual approach of setting an option 
 in .Rprofile fails, because vignettes are built with the --vanilla option.
 This currently means that AnalysisSuite must be available at:
-  ~/projects/AnalysisSuite
+
+    ~/projects/AnalysisSuite
+
 to be found during the vignette build process.
