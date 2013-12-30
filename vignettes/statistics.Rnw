@@ -186,7 +186,7 @@ Let's compare the peak response frequency of male aSP-f and female
 aSP-g neurons. First calculate the peak frequencies across multiple
 bins:
 
-<<peak_freq5 tidy=FALSE>>==
+<<peak_freq5, tidy=FALSE>>==
 wt.genos<-c('fru','JK56','JK1029')
 windows<-seq(from=2150,by=200,length=5)
 

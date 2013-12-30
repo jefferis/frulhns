@@ -735,7 +735,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<peak_freq5 tidy=FALSE>>==
+<<peak_freq5, tidy=FALSE>>==
 \end_layout
 
 \begin_layout Plain Layout
