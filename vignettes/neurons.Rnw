@@ -36,8 +36,10 @@ of lateral horn neurons in this study.
 <<setup, include=FALSE, cache=FALSE>>=
 library(knitr)
 library(frulhns)
-# this is equivalent to \SweaveOpts{...}
-opts_chunk$set(fig.path='figure/minimal-',fig.align='center',fig.show='hold',fig.height=3,fig.width=4,out.height='3in',out.width='4in')
+# note setting fig.path like this (i.e. putting figures in the same folder as the other files)
+# works around a subtle bug in knitr where the 'figure' subfolder is not created by a custom plot
+# hook such as hook_rgl (but this folder would be created by a regular 'plot').
+opts_chunk$set(fig.path='fig-',fig.align='center',fig.show='hold',fig.height=3,fig.width=4,out.height='3in',out.width='4in')
 options(replace.assign=TRUE,width=55)
 # so that we can make snapshots from rgl plots
 knit_hooks$set(custom.plot = hook_rgl)

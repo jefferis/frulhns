@@ -109,15 +109,25 @@ library(frulhns)
 
 \begin_layout Plain Layout
 
-# this is equivalent to 
-\backslash
-SweaveOpts{...}
+# note setting fig.path like this (i.e.
+ putting figures in the same folder as the other files)
 \end_layout
 
 \begin_layout Plain Layout
 
-opts_chunk$set(fig.path='figure/minimal-',fig.align='center',fig.show='hold',fig.hei
-ght=3,fig.width=4,out.height='3in',out.width='4in')
+# works around a subtle bug in knitr where the 'figure' subfolder is not
+ created by a custom plot
+\end_layout
+
+\begin_layout Plain Layout
+
+# hook such as hook_rgl (but this folder would be created by a regular 'plot').
+\end_layout
+
+\begin_layout Plain Layout
+
+opts_chunk$set(fig.path='fig-',fig.align='center',fig.show='hold',fig.height=3,fig.wi
+dth=4,out.height='3in',out.width='4in')
 \end_layout
 
 \begin_layout Plain Layout
