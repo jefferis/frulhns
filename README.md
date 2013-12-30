@@ -9,6 +9,10 @@ _Cell_, 155(7):1610-1623, 19 December 2013 [doi:10.1016/j.cell.2013.11.025](http
 
 Johannes Kohl\*, Aaron D. Ostrovsky\*, Shahar Frechter, Gregory S.X.E. Jefferis
 
+Further information about this work, including additional data and experimental methodology, is available at http://jefferislab.org/si/frulhns. This includes cached copies of the vignettes included in this package:
+
+  * [neurons.pdf](http://jefferislab.org/si/frulhns/neurons.pdf)
+  * [statistics.pdf](http://jefferislab.org/si/frulhns/statistics.pdf)
 
 ## Installation
 Currently there isn't a released version on [CRAN](http://cran.r-project.org/) so copy/paste the instructions under **Bleeding Edge** carefully.
@@ -17,7 +21,7 @@ Currently there isn't a released version on [CRAN](http://cran.r-project.org/) s
 See DESCRIPTION. In order to build the vignettes, which are one of the main reasons 
 for creating this package, several additional packages are required including 
 [knitr](http://yihui.name/knitr/), my [gphys](https://github.com/jefferis/gphys) 
-package and [coin](cran.r-project.org/package=coin). Following standard practice, 
+package and [coin](http://cran.r-project.org/package=coin). Following standard practice, 
 these packages are listed under the Suggested field of the DESCRIPTION file. 
 They can be installed when `dependencies=TRUE` is supplied as an installation 
 option with the exception of packages not available on [CRAN](http://cran.r-project.org/).
