@@ -1,0 +1,13 @@
+frulhns 0.2.1
+=============
+* Fix some small bugs in help, vignette building, README
+  (some of which were spotted by Ashley Manton when building on a new machine)
+
+frulhns 0.2
+===========
+* Fully document all objects and fix most R CMD check warnings
+* add neurons vignette
+
+frulhns 0.1
+===========
+* First version
