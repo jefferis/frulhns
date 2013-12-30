@@ -19,7 +19,7 @@ attr(allspikes[[1]],'oddconf')[,1:4]
 }
 }
 \seealso{
-  \code{\link{spiketimes}, \link{fixedUseful}}
+  \code{\link[gphys]{spiketimes}, \link{fixedUseful}}
 }
 \keyword{datasets}
 

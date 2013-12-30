@@ -47,7 +47,7 @@ NULL
 #' names, stimulus duration, odour delivery device channel etc.)
 #' @name allspikes
 #' @docType data
-#' @seealso \code{\link{spiketimes}, \link{fixedUseful}}
+#' @seealso \code{\link[gphys]{spiketimes}, \link{fixedUseful}}
 #' @examples
 #' \dontrun{
 #' str(allspikes[[1]])
