@@ -21,17 +21,14 @@ Currently there isn't a released version on [CRAN](http://cran.r-project.org/) s
 See DESCRIPTION. In order to build the vignettes, which are one of the main reasons 
 for creating this package, several additional packages are required including 
 [knitr](http://yihui.name/knitr/), my [gphys](https://github.com/jefferis/gphys) 
-package and [coin](http://cran.r-project.org/package=coin). Following standard practice, 
+package and [nat.as](https://github.com/jefferis/nat.as) packages and the CRAN 
+package [coin](http://cran.r-project.org/package=coin). Following standard practice, 
 these packages are listed under the Suggested field of the DESCRIPTION file. 
 They can be installed when `dependencies=TRUE` is supplied as an installation 
 option with the exception of packages not available on [CRAN](http://cran.r-project.org/).
 
 ### Released versions
-The recommendation _will_ be to install from our lab repository:
-
-```r
-install.packages("frulhns",repos='http://jefferislab.org/R',type='source')
-```
+There is presently no released version.
 
 ### Bleeding Edge
 For the time being the only approach is to use the **devtools** package to install the development version:
@@ -43,6 +40,11 @@ install.packages("devtools")
 library(devtools)
 # install non-CRAN dependencies explicitly
 install_github("gphys", "jefferis")
+# Install wrapper for AnalysisSuite code
+# see https://github.com/jefferis/nat.as for further install options
+install_github("nat.as", "jefferis")
+library(nat.as);install_analysis_suite();reload_analysis_suite()
+
 # dependencies = TRUE will install suggested packages from CRAN that are required for the vignettes.
 install_github("frulhns", "jefferis", dependencies=TRUE)
 ```
@@ -50,14 +52,10 @@ install_github("frulhns", "jefferis", dependencies=TRUE)
 Note: Windows users need [Rtools](http://www.murdoch-sutherland.com/Rtools/) in addition to 
 [devtools](http://CRAN.R-project.org/package=devtools) to install this way.
 
-## FIXME
-There is currently one major problem with vignette building. The neuroanatomical 
-analysis depends on my [AnalysisSuite](https://github.com/jefferis/AnalysisSuite) 
-codebase which is not yet a formal package. This makes it surprisingly hard to
-locate the source code post-installation. My usual approach of setting an option 
-in .Rprofile fails, because vignettes are built with the --vanilla option.
-This currently means that AnalysisSuite must be available at:
-
-    ~/projects/AnalysisSuite
-
-to be found during the vignette build process.
+## Install details
+The neuroanatomical analysis in the neurons vignette depends on my 
+[AnalysisSuite](https://github.com/jefferis/AnalysisSuite) 
+codebase which is not yet a formal package. In order to ensure that this code
+is correctly located during the vignette building process, I have created the 
+`nat.as` wrapper package, which is used first to install and then to load 
+AnalysisSuite.
