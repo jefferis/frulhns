@@ -152,18 +152,12 @@ tryCatch({
 
 \begin_layout Plain Layout
 
-	as.loc=getOption('gjanalysissuite.startup')
+	library(nat.as)
 \end_layout
 
 \begin_layout Plain Layout
 
-	if(is.null(as.loc)) as.loc=normalizePath("~/projects/AnalysisSuite/R/Code/Startup.R
-")
-\end_layout
-
-\begin_layout Plain Layout
-
-	source(as.loc,keep.source=TRUE)
+	stopifnot(file.exists(analysis_suite_dir()))
 \end_layout
 
 \begin_layout Plain Layout
@@ -173,8 +167,8 @@ tryCatch({
 
 \begin_layout Plain Layout
 
-	stop("Please install AnalysisSuite from https://github.com/jefferis/AnalysisSuit
-e")
+	stop("Please install nat.as package from https://github.com/jefferis/nat.as
+ and then run install_analysis_suite()")
 \end_layout
 
 \begin_layout Plain Layout
@@ -193,8 +187,19 @@ e")
 \end_layout
 
 \begin_layout Standard
-Before running this vignette, it is necessary to install some R code available
+Before running this vignette, it is necessary to install an R package available
  at 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://github.com/jefferis/nat.as
+\end_layout
+
+\end_inset
+
+ (which in turn wraps a large suite of R code available at 
 \begin_inset Flex URL
 status open
 
@@ -205,10 +210,10 @@ https://github.com/jefferis/AnalysisSuite
 
 \end_inset
 
-.
- There are detailed instructions on that page, but the long and the short
- of it is that the quickest method is to run the following code in an interactiv
-e session:
+).
+ There are detailed instructions on the first page, but the long and the
+ short of it is that the quickest method is to run the following code in
+ an interactive session:
 \end_layout
 
 \begin_layout Standard
@@ -222,7 +227,41 @@ status open
 
 \begin_layout Plain Layout
 
-source("http://flybrain.mrc-lmb.cam.ac.uk/R/AnalysisSuite/WebInstall.R")
+install.packages('devtools') # install hadley's devtools if required
+\end_layout
+
+\begin_layout Plain Layout
+
+library(devtools)
+\end_layout
+
+\begin_layout Plain Layout
+
+install_github('nat.as','jefferis')
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# now use nat.as wrapper package to install AnalysisSuite
+\end_layout
+
+\begin_layout Plain Layout
+
+library(nat.as)
+\end_layout
+
+\begin_layout Plain Layout
+
+install_analysis_suite()
+\end_layout
+
+\begin_layout Plain Layout
+
+reload_analysis_suite()
 \end_layout
 
 \begin_layout Plain Layout
@@ -237,6 +276,39 @@ source("http://flybrain.mrc-lmb.cam.ac.uk/R/AnalysisSuite/WebInstall.R")
 
 \begin_layout Section
 Basic Plots
+\end_layout
+
+\begin_layout Standard
+Now we can start a fresh R session, load required libraries and get to work
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<eval=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+library(frulhns)
+\end_layout
+
+\begin_layout Plain Layout
+
+library(nat.as)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
