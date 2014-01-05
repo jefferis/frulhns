@@ -1,6 +1,6 @@
 # frulhns
 ## Introduction
-This project distributes all electrophysioligical spike data, statistical analysis,
+This project distributes all electrophysiological spike data, statistical analysis,
 and traced neurons associated with the open access publication:
 
 **[A bidirectional circuit switch reroutes pheromone signals in male and female brains](http://dx.doi.org/10.1016/j.cell.2013.11.025)**
