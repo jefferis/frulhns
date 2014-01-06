@@ -15,20 +15,32 @@ Further information about this work, including additional data and experimental 
   * [statistics.pdf](http://jefferislab.org/si/frulhns/statistics.pdf)
 
 ## Installation
-Currently there isn't a released version on [CRAN](http://cran.r-project.org/) so copy/paste the instructions under **Bleeding Edge** carefully.
-
-### Dependencies
-See DESCRIPTION. In order to build the vignettes, which are one of the main reasons 
-for creating this package, several additional packages are required including 
-[knitr](http://yihui.name/knitr/), my [gphys](https://github.com/jefferis/gphys) 
-package and [nat.as](https://github.com/jefferis/nat.as) packages and the CRAN 
-package [coin](http://cran.r-project.org/package=coin). Following standard practice, 
-these packages are listed under the Suggested field of the DESCRIPTION file. 
-They can be installed when `dependencies=TRUE` is supplied as an installation 
-option with the exception of packages not available on [CRAN](http://cran.r-project.org/).
+Choose the **Released versions** instructions unless you want to keep up with 
+package development.
 
 ### Released versions
-There is presently no released version.
+There is presently no version on CRAN, but the package can be installed from our
+lab R repository.
+
+```r
+# first install nat.as R package and its dependencies
+# dependencies = TRUE will install suggested packages that are
+# required for the vignettes.
+install.packages('nat.as',
+                 repos=c(getOption("repos"),'http://flybrain.mrc-lmb.cam.ac.uk/R'),
+                 type='both',dependencies=TRUE)
+# Then use nat.as to install AnalysisSuite
+# (extra code required for neurons vignette)
+library(nat.as);install_analysis_suite();reload_analysis_suite()
+
+# now install frulhns package - this will also build the vignette
+install.packages('frulhns',
+                 repos=c(getOption("repos"),'http://flybrain.mrc-lmb.cam.ac.uk/R'),
+                 type='both',dependencies=TRUE)
+
+# now you can use the package to explore our data
+library(frulhns)
+```
 
 ### Bleeding Edge
 For the time being the only approach is to use the **devtools** package to install the development version:
@@ -52,8 +64,20 @@ install_github("frulhns", "jefferis", dependencies=TRUE)
 Note: Windows users need [Rtools](http://www.murdoch-sutherland.com/Rtools/) in addition to 
 [devtools](http://CRAN.R-project.org/package=devtools) to install this way.
 
+
 ## Install details
-The neuroanatomical analysis in the neurons vignette depends on my 
+### Dependencies
+See DESCRIPTION. In order to build the vignettes, which are one of the main reasons 
+for creating this package, several additional packages are required including 
+[knitr](http://yihui.name/knitr/), my [gphys](https://github.com/jefferis/gphys) 
+package and [nat.as](https://github.com/jefferis/nat.as) packages and the CRAN 
+package [coin](http://cran.r-project.org/package=coin). Following standard practice, 
+these packages are listed under the Suggested field of the DESCRIPTION file. 
+They can be installed when `dependencies=TRUE` is supplied as an installation 
+option with the exception of packages not available on [CRAN](http://cran.r-project.org/).
+
+### AnalysisSuite
+The neuroanatomical analysis in the `neurons` vignette depends on my 
 [AnalysisSuite](https://github.com/jefferis/AnalysisSuite) 
 codebase which is not yet a formal package. In order to ensure that this code
 is correctly located during the vignette building process, I have created the 
