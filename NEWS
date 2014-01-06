@@ -1,3 +1,10 @@
+frulhns 0.3
+===========
+* switch vignette to use library nat.as rather than AnalysisSuite
+* Add nat.as package in Suggested (and therefore nat)
+* README installation instruction improvements
+* first version on lab repo
+
 frulhns 0.2.1
 =============
 * Fix some small bugs in help, vignette building, README
