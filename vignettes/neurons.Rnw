@@ -44,10 +44,9 @@ options(replace.assign=TRUE,width=55)
 # so that we can make snapshots from rgl plots
 knit_hooks$set(custom.plot = hook_rgl)
 tryCatch({
-	library(nat.as)
-	stopifnot(file.exists(analysis_suite_dir()))
+	library(nat)
 },error = function(e) {
-	stop("Please install nat.as package from https://github.com/jefferis/nat.as and then run install_analysis_suite()")
+	stop("Please install nat package from https://github.com/jefferis/nat")
 })
 @
 
@@ -77,7 +76,7 @@ to work
 
 <<eval=FALSE>>=
 library(frulhns)
-library(nat.as)
+library(nat)
 @
 
 Let's start by plotting a single neuron before registration
@@ -118,7 +117,7 @@ of the brain. Let's define a quick function to plot a brain surface.
 #' is2surf()
 #' is2surf(alpha=0.4,col='cyan')
 is2surf<-function(alpha=0.2,col='grey',...){
-  plot3dsurface("Exterior",d=IS2Surf,col=col,alpha=alpha,...)
+  plot3d(IS2Surf,"Exterior",col=col,alpha=alpha,...)
 }
 @
 

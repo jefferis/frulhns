@@ -152,12 +152,7 @@ tryCatch({
 
 \begin_layout Plain Layout
 
-	library(nat.as)
-\end_layout
-
-\begin_layout Plain Layout
-
-	stopifnot(file.exists(analysis_suite_dir()))
+	library(nat)
 \end_layout
 
 \begin_layout Plain Layout
@@ -167,8 +162,7 @@ tryCatch({
 
 \begin_layout Plain Layout
 
-	stop("Please install nat.as package from https://github.com/jefferis/nat.as
- and then run install_analysis_suite()")
+	stop("Please install nat package from https://github.com/jefferis/nat")
 \end_layout
 
 \begin_layout Plain Layout
@@ -298,7 +292,7 @@ library(frulhns)
 
 \begin_layout Plain Layout
 
-library(nat.as)
+library(nat)
 \end_layout
 
 \begin_layout Plain Layout
@@ -491,7 +485,7 @@ is2surf<-function(alpha=0.2,col='grey',...){
 
 \begin_layout Plain Layout
 
-  plot3dsurface("Exterior",d=IS2Surf,col=col,alpha=alpha,...)
+  plot3d(IS2Surf,"Exterior",col=col,alpha=alpha,...)
 \end_layout
 
 \begin_layout Plain Layout
