@@ -80,8 +80,8 @@ Gregory Jefferis, Johannes Kohl, Aaron Ostrovsky, Shahar Frechter
 
 \begin_layout Abstract
 This vignette shows some examples of how to use neuronal tracings in combination
- with GJ's AnalysisSuite R code to analyse the structure of lateral horn
- neurons in this study.
+ with GJ's nat (NeuroAnatomy Toolbox) R package to analyse the structure
+ of lateral horn neurons in this study.
 \end_layout
 
 \begin_layout Section
@@ -181,33 +181,22 @@ tryCatch({
 \end_layout
 
 \begin_layout Standard
-Before running this vignette, it is necessary to install an R package available
- at 
+Before running this vignette, it is necessary to install an R package nat
+ (NeuroAnatomy Toolbox).
+ This will have happened if you installed the frulhns package.
+ There are instructions at 
 \begin_inset Flex URL
 status open
 
 \begin_layout Plain Layout
 
-https://github.com/jefferis/nat.as
+https://github.com/jefferis/nat
 \end_layout
 
 \end_inset
 
- (which in turn wraps a large suite of R code available at 
-\begin_inset Flex URL
-status open
-
-\begin_layout Plain Layout
-
-https://github.com/jefferis/AnalysisSuite
-\end_layout
-
-\end_inset
-
-).
- There are detailed instructions on the first page, but the long and the
- short of it is that the quickest method is to run the following code in
- an interactive session:
+, but the quickest method is to run the following code in an interactive
+ session:
 \end_layout
 
 \begin_layout Standard
@@ -221,41 +210,8 @@ status open
 
 \begin_layout Plain Layout
 
-install.packages('devtools') # install hadley's devtools if required
-\end_layout
-
-\begin_layout Plain Layout
-
-library(devtools)
-\end_layout
-
-\begin_layout Plain Layout
-
-install_github('nat.as','jefferis')
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-# now use nat.as wrapper package to install AnalysisSuite
-\end_layout
-
-\begin_layout Plain Layout
-
-library(nat.as)
-\end_layout
-
-\begin_layout Plain Layout
-
-install_analysis_suite()
-\end_layout
-
-\begin_layout Plain Layout
-
-reload_analysis_suite()
+install.packages("nat",repos=c(getOption("repos"),'http://jefferislab.org/R'),type
+='both')
 \end_layout
 
 \begin_layout Plain Layout

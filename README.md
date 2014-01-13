@@ -23,27 +23,18 @@ There is presently no version on CRAN, but the package can be installed from our
 lab R repository.
 
 ```r
-# first install nat.as R package and its dependencies
+# first install frulhns R package and its dependencies
 # dependencies = TRUE will install suggested packages that are
-# required for the vignettes.
-install.packages('nat.as',
-                 repos=c(getOption("repos"),'http://flybrain.mrc-lmb.cam.ac.uk/R'),
+# required for building vignettes.
+install.packages('frulhns',repos=c(getOption("repos"),'http://jefferislab.org/R'),
                  type='both',dependencies=TRUE)
-# Then use nat.as to install AnalysisSuite
-# (extra code required for neurons vignette)
-library(nat.as);install_analysis_suite();reload_analysis_suite()
-
-# now install frulhns package - this will also build the vignette
-install.packages('frulhns',
-                 repos=c(getOption("repos"),'http://flybrain.mrc-lmb.cam.ac.uk/R'),
-                 type='both',dependencies=TRUE)
-
 # now you can use the package to explore our data
 library(frulhns)
 ```
 
 ### Bleeding Edge
-For the time being the only approach is to use the **devtools** package to install the development version:
+You can also use the **devtools** package to install the development versions of
+this package and its main dependencies:
 
 ```r
 # if required
@@ -52,10 +43,7 @@ install.packages("devtools")
 library(devtools)
 # install non-CRAN dependencies explicitly
 install_github("gphys", "jefferis")
-# Install wrapper for AnalysisSuite code
-# see https://github.com/jefferis/nat.as for further install options
-install_github("nat.as", "jefferis")
-library(nat.as);install_analysis_suite();reload_analysis_suite()
+install_github("nat", "jefferis")
 
 # dependencies = TRUE will install suggested packages from CRAN that are required for the vignettes.
 install_github("frulhns", "jefferis", dependencies=TRUE)
@@ -70,16 +58,18 @@ Note: Windows users need [Rtools](http://www.murdoch-sutherland.com/Rtools/) in 
 See DESCRIPTION. In order to build the vignettes, which are one of the main reasons 
 for creating this package, several additional packages are required including 
 [knitr](http://yihui.name/knitr/), my [gphys](https://github.com/jefferis/gphys) 
-package and [nat.as](https://github.com/jefferis/nat.as) packages and the CRAN 
+package and [nat](https://github.com/jefferis/nat) packages and the CRAN 
 package [coin](http://cran.r-project.org/package=coin). Following standard practice, 
 these packages are listed under the Suggested field of the DESCRIPTION file. 
 They can be installed when `dependencies=TRUE` is supplied as an installation 
 option with the exception of packages not available on [CRAN](http://cran.r-project.org/).
 
 ### AnalysisSuite
-The neuroanatomical analysis in the `neurons` vignette depends on my 
+The neuroanatomical analysis in the `neurons` vignette depend only on my 
+[nat](https://github.com/jefferis/nat) package. However there is a great deal
+of additional functionality in my 
 [AnalysisSuite](https://github.com/jefferis/AnalysisSuite) 
-codebase which is not yet a formal package. In order to ensure that this code
-is correctly located during the vignette building process, I have created the 
-`nat.as` wrapper package, which is used first to install and then to load 
-AnalysisSuite.
+codebase which is not yet a formal package. If you wish to use this code to go 
+beyond the demonstrations in the package vignettes, you must install and load 
+the [nat.as](https://github.com/jefferis/nat.as)
+wrapper package, which is used first to install and then to load AnalysisSuite.

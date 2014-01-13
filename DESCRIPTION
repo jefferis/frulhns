@@ -18,7 +18,7 @@ Suggests:
     rgl,
     ggplot2,
     gphys,
-    nat.as
+    nat
 VignetteBuilder: knitr
 LazyData: true
 Collate:

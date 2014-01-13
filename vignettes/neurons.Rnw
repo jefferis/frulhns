@@ -27,8 +27,8 @@
 \maketitle
 \begin{abstract}
 This vignette shows some examples of how to use neuronal tracings
-in combination with GJ's AnalysisSuite R code to analyse the structure
-of lateral horn neurons in this study.
+in combination with GJ's nat (NeuroAnatomy Toolbox) R package to analyse
+the structure of lateral horn neurons in this study.
 \end{abstract}
 
 \section{Installation }
@@ -51,21 +51,13 @@ tryCatch({
 @
 
 Before running this vignette, it is necessary to install an R package
-available at \url{https://github.com/jefferis/nat.as} (which in turn
-wraps a large suite of R code available at \url{https://github.com/jefferis/AnalysisSuite}).
-There are detailed instructions on the first page, but the long and
-the short of it is that the quickest method is to run the following
-code in an interactive session:
+nat (NeuroAnatomy Toolbox). This will have happened if you installed
+the frulhns package. There are instructions at \url{https://github.com/jefferis/nat},
+but the quickest method is to run the following code in an interactive
+session:
 
 <<install-instructions, eval=FALSE>>=
-install.packages('devtools') # install hadley's devtools if required
-library(devtools)
-install_github('nat.as','jefferis')
-
-# now use nat.as wrapper package to install AnalysisSuite
-library(nat.as)
-install_analysis_suite()
-reload_analysis_suite()
+install.packages("nat",repos=c(getOption("repos"),'http://jefferislab.org/R'),type='both')
 @
 
 
