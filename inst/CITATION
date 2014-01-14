@@ -1,0 +1,12 @@
+bibentry('Article',
+         author = personList( as.person("Johannes Kohl"),
+                              as.person("Aaron D Ostrovsky"),
+                              as.person("Shahar Frechter"),
+                              as.person("Gregory S X E Jefferis")),
+         journal = "Cell",
+         number = "7",
+         pages = "1610-23",
+         title = "A bidirectional circuit switch reroutes pheromone signals in male and female brains",
+         volume = "155",
+         year = "2013",
+         url="http://dx.doi.org/10.1016/j.cell.2013.11.025")
