@@ -4,6 +4,6 @@
 \alias{frulhns-package}
 \title{frulhns}
 \description{
-  frulhns
+frulhns
 }
 

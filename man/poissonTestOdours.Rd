@@ -2,8 +2,7 @@
 \alias{poissonTestOdours}
 \title{Carry out poisson test on absolute number of spikes in odour response}
 \usage{
-  poissonTestOdours(x, odours = colnames(x),
-    maxtrials = NA, ...)
+poissonTestOdours(x, odours = colnames(x), maxtrials = NA, ...)
 }
 \arguments{
   \item{x}{An m x n odour response matrix for m trials of n
@@ -19,15 +18,15 @@
   \code{poisson.test} #'}
 }
 \description{
-  Carry out poisson test on absolute number of spikes in
-  odour response
+Carry out poisson test on absolute number of spikes in
+odour response
 }
 \details{
-  It is assumed that x contains one column called
-  \code{"blank"}, against which the other columns will all
-  be tested.
+It is assumed that x contains one column called
+\code{"blank"}, against which the other columns will all be
+tested.
 }
 \seealso{
-  \code{\link{poisson.test}}
+\code{\link{poisson.test}}
 }
 

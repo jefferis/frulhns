@@ -21,7 +21,3 @@ Suggests:
     nat
 VignetteBuilder: knitr
 LazyData: true
-Collate:
-    'frulhns-package.r'
-    'spikefunctions.r'
-    'frulhns-data.r'
