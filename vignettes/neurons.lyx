@@ -32,7 +32,16 @@ knitr
 \index_command default
 \paperfontsize default
 \spacing single
-\use_hyperref false
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder false
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
 \papersize default
 \use_geometry true
 \use_amsmath 1
@@ -361,6 +370,10 @@ plot3d(jkn[1:10],col=rainbow,WithNodes=FALSE)
 
 \end_layout
 
+\begin_layout Section
+Brains and Views
+\end_layout
+
 \begin_layout Standard
 We can already see that those neurons are more tightly distributed.
  However it's not really too clear how they relate to the structure of the
@@ -495,6 +508,351 @@ plot3d(jkn[1:10],col=rainbow,WithNodes=FALSE)
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+The default view is a actually a dorsal one, that is looking down the dorso-vent
+ral axis onto the dorsal surface of the brain.
+ People are actually more used to looking at a frontal view, so let's set
+ up some quick utility functions to help:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<set3d functions>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+#' Set the 3d view using some standard Drosophila anatomical terms
+\end_layout
+
+\begin_layout Plain Layout
+
+#' 
+\end_layout
+
+\begin_layout Plain Layout
+
+#' @param pos The chosen view.
+ Defaults to front (=anterior)
+\end_layout
+
+\begin_layout Plain Layout
+
+#' @param zoom Numeric zoom factor (default 0.7)
+\end_layout
+
+\begin_layout Plain Layout
+
+#' @seealso 
+\backslash
+code{
+\backslash
+link[rgl]{view3d}}
+\end_layout
+
+\begin_layout Plain Layout
+
+set3d<-function(pos=c("front","left","back","right","ventral","dorsal"),zoom=.7,...)
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	pos=match.arg(pos)
+\end_layout
+
+\begin_layout Plain Layout
+
+	m=diag(c(1,-1,-1,1)) # front
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	if(pos=="left") {
+\end_layout
+
+\begin_layout Plain Layout
+
+		m=diag(c(0,-1,0,1))
+\end_layout
+
+\begin_layout Plain Layout
+
+		m[1,3]=1;m[3,1]=1
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+	if(pos=="back") {
+\end_layout
+
+\begin_layout Plain Layout
+
+		m=diag(c(-1,-1,1,1))
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+	if(pos=="right") {
+\end_layout
+
+\begin_layout Plain Layout
+
+		m=diag(c(0,-1,0,1))
+\end_layout
+
+\begin_layout Plain Layout
+
+		m[1,3]=m[3,1]=-1
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+	if(pos=="ventral") {
+\end_layout
+
+\begin_layout Plain Layout
+
+		m=diag(c(1,-1,-1,1))
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+	if(pos=="dorsal") {
+\end_layout
+
+\begin_layout Plain Layout
+
+		m=diag(c(1,1,1,1))
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+	view3d(userMatrix=m,zoom=zoom,...)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Now we can plot the same data in a more conventional view:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<first-10-neurons-brain-frontal, custom.plot=TRUE, dev='png', dpi=300>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+clear3d()
+\end_layout
+
+\begin_layout Plain Layout
+
+is2surf()
+\end_layout
+
+\begin_layout Plain Layout
+
+plot3d(jkn[1:10],col=rainbow,WithNodes=FALSE)
+\end_layout
+
+\begin_layout Plain Layout
+
+set3d("front")
+\end_layout
+
+\begin_layout Plain Layout
+
+# Hmm, let's zoom in a bit, notice that zoom values
+\end_layout
+
+\begin_layout Plain Layout
+
+# get smaller as you zoom in (see ?view3d for details)
+\end_layout
+
+\begin_layout Plain Layout
+
+set3d("front",0.5)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Plotting selected neurons
+\end_layout
+
+\begin_layout Standard
+OK, now let's look at a particular set of lateral horn neurons: wild type
+ aSP-g.
+ We can use the dataframe attached to the neuronlist to select which neurons
+ to plot and how to colour them.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<asgp-wildtype, custom.plot=TRUE, dev='png', dpi=300>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+clear3d()
+\end_layout
+
+\begin_layout Plain Layout
+
+plot3d(jkn,subset=cluster=="aSP-g" & shortGenotype=="JK1029", col=sex,colpal=c(m
+ale='cyan',female='magenta'),WithNodes=FALSE,lwd=2)
+\end_layout
+
+\begin_layout Plain Layout
+
+set3d("front")
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The distinction between male and female neurons is clear with several regions
+ that are exclusively innervated by male or female arbours.
+\end_layout
+
+\begin_layout Standard
+Similarly let's look at all the neurons recored from the wildtype JK1029-Gal4
+ male flies.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<JK1029-wildtype-male, custom.plot=TRUE, dev='png', dpi=300>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+clear3d()
+\end_layout
+
+\begin_layout Plain Layout
+
+plotresult=plot3d(jkn,subset=shortGenotype=="JK1029" & sex=="male",
+\end_layout
+
+\begin_layout Plain Layout
+
+col=cluster,WithNodes=FALSE,lwd=2)
+\end_layout
+
+\begin_layout Plain Layout
+
+set3d("front")
+\end_layout
+
+\begin_layout Plain Layout
+
+# note that plotresult includes a useful dataframe as an attribute
+\end_layout
+
+\begin_layout Plain Layout
+
+# with details about the selected neurons
+\end_layout
+
+\begin_layout Plain Layout
+
+head(attr(plotresult,'df'))
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+There are 3 clusters.
+ The cell bodies for aSP-f (red) are more dorsal whereas those for aSP-g
+ and aSP-h (green, blue) are more lateral and not obviously separable.
 \end_layout
 
 \end_body
