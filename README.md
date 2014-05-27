@@ -1,4 +1,5 @@
 # frulhns
+[![DOI](https://zenodo.org/badge/4241/jefferis/frulhns.png)](http://dx.doi.org/10.5281/zenodo.10173) 
 ## Introduction
 This project distributes all electrophysiological spike data, statistical analysis,
 and traced neurons associated with the open access publication:
