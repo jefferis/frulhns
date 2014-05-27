@@ -186,7 +186,7 @@ SweaveOpts{...}
 
 \begin_layout Plain Layout
 
-opts_chunk$set(fig.path='figure/minimal-', fig.align='center', fig.show='hold',
+opts_chunk$set(fig.path='fig-minimal-', fig.align='center', fig.show='hold',
  cache=TRUE,
 \end_layout
 
