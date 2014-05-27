@@ -1,4 +1,4 @@
-%% LyX 2.0.5 created this file.  For more info, see http://www.lyx.org/.
+%% LyX 2.1.0 created this file.  For more info, see http://www.lyx.org/.
 %% Do not edit unless you really know what you are doing.
 \documentclass[british]{article}
 \usepackage{mathptmx}
@@ -271,7 +271,7 @@ Or67d_stats[['aSP-g']]=chisq_test(Or67d_clusters_bymut[[2]])
 @
 
 
-\subsection{fru\textsuperscript{-/-} mutant cells}
+\subsection{fru\protect\textsuperscript{-/-} mutant cells}
 
 Now for the fru-/- mutant cells (Figure 4)
 
@@ -300,7 +300,7 @@ S_fruf=wilcox_test(S~mut,droplevels(d))
 @
 
 
-\subsection{fru\textsuperscript{M} mutant cells}
+\subsection{fru\protect\textsuperscript{M} mutant cells}
 
 Now for the fruM mutant cells (Figure 5)
 
