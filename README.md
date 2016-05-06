@@ -38,14 +38,12 @@ You can also use the **devtools** package to install the development versions of
 this package and its main dependencies:
 
 ```r
-# if required
-install.packages("devtools")
+if (!require("devtools")) install.packages("devtools")
 
-library(devtools)
 # install non-CRAN dependencies explicitly
-install_github("jefferis/gphys")
+devtools::install_github("jefferis/gphys")
 # dependencies = TRUE will install suggested packages from CRAN that are required for the vignettes.
-install_github("jefferis/frulhns", dependencies=TRUE)
+devtools::install_github("jefferis/frulhns", dependencies=TRUE)
 ```
 
 Note: Windows users need [Rtools](http://www.murdoch-sutherland.com/Rtools/) in addition to 
