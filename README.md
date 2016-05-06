@@ -43,11 +43,9 @@ install.packages("devtools")
 
 library(devtools)
 # install non-CRAN dependencies explicitly
-install_github("gphys", "jefferis")
-install_github("nat", "jefferis")
-
+install_github("jefferis/gphys")
 # dependencies = TRUE will install suggested packages from CRAN that are required for the vignettes.
-install_github("frulhns", "jefferis", dependencies=TRUE)
+install_github("jefferis/frulhns", dependencies=TRUE)
 ```
 
 Note: Windows users need [Rtools](http://www.murdoch-sutherland.com/Rtools/) in addition to 
