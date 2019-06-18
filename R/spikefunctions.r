@@ -6,7 +6,7 @@
 #' @param odours Names of odours (defaults to \code{colnames(x)})
 #' @param maxtrials Maximum number of trials to consider (default => all)
 #' @param ... Additional parameters passed to \code{poisson.test}
-#' #' @export
+#' @export
 #' @seealso \code{\link{poisson.test}}
 poissonTestOdours<-function(x,odours=colnames(x),maxtrials=NA,...){
   nonblank=setdiff(odours,'blank')
