@@ -6,7 +6,6 @@ Description: Traced neurons and summary statistical data to accompany:
     doi:10.1016/j.cell.2013.11.025 Johannes Kohl*, Aaron D. Ostrovsky*, Shahar
     Frechter, Gregory S.X.E. Jefferis
 Version: 0.4.1
-Date: 2014-01-20
 Author: Gregory Jefferis
 Maintainer: Gregory Jefferis <jefferis@mrc-lmb.cam.ac.uk>
 Depends:
