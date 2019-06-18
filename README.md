@@ -38,16 +38,12 @@ You can also use the **devtools** package to install the development versions of
 this package and its main dependencies:
 
 ```r
-# if required
-install.packages("devtools")
+if (!require("devtools")) install.packages("devtools")
 
-library(devtools)
 # install non-CRAN dependencies explicitly
-install_github("gphys", "jefferis")
-install_github("nat", "jefferis")
-
+devtools::install_github("jefferis/gphys")
 # dependencies = TRUE will install suggested packages from CRAN that are required for the vignettes.
-install_github("frulhns", "jefferis", dependencies=TRUE)
+devtools::install_github("jefferis/frulhns", dependencies=TRUE)
 ```
 
 Note: Windows users need [Rtools](http://www.murdoch-sutherland.com/Rtools/) in addition to 
@@ -56,7 +52,7 @@ Note: Windows users need [Rtools](http://www.murdoch-sutherland.com/Rtools/) in 
 
 ## Install details
 ### Dependencies
-See DESCRIPTION. In order to build the vignettes, which are one of the main reasons 
+See [DESCRIPTION](DESCRIPTION). In order to build the vignettes, which are one of the main reasons 
 for creating this package, several additional packages are required including 
 [knitr](http://yihui.name/knitr/), my [gphys](https://github.com/jefferis/gphys) 
 package and [nat](https://github.com/jefferis/nat) packages and the CRAN 
@@ -67,10 +63,17 @@ option with the exception of packages not available on [CRAN](http://cran.r-proj
 
 ### AnalysisSuite
 The neuroanatomical analysis in the `neurons` vignette depend only on my 
-[nat](https://github.com/jefferis/nat) package. However there is a great deal
-of additional functionality in my 
+[nat](https://github.com/jefferis/nat) package.  This is now a well-documented and
+mature codebase with a number of interesting extension packages. Published work from 2013 and earlier depended on my
 [AnalysisSuite](https://github.com/jefferis/AnalysisSuite) 
-codebase which is not yet a formal package. If you wish to use this code to go 
-beyond the demonstrations in the package vignettes, you must install and load 
-the [nat.as](https://github.com/jefferis/nat.as)
-wrapper package, which is used first to install and then to load AnalysisSuite.
+codebase, which is not available directly as a formal R package.
+This includes an earlier version of the
+neuron search/similarity code now available as package 
+[nat.nblast](https://github.com/jefferislab/nat.nblast).
+
+If you wish to use the AnalysisSuite code to replicate analysis from 
+Kohl, Ostrovsky et al 2013 exactly as it was performed, 
+you must install and load the [nat.as](https://github.com/jefferis/nat.as)
+wrapper R package, which is used to install and then load the AnalysisSuite codebase.
+Full details of the installation procedure are provided on the
+[nat.as](https://github.com/jefferis/nat.as) package homepage.
