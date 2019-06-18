@@ -8,6 +8,7 @@
 #' @param ... Additional parameters passed to \code{poisson.test}
 #' @export
 #' @seealso \code{\link{poisson.test}}
+#' @importFrom stats poisson.test
 poissonTestOdours<-function(x,odours=colnames(x),maxtrials=NA,...){
   nonblank=setdiff(odours,'blank')
   if(!is.na(maxtrials) & maxtrials<nrow(x)) x=x[1:maxtrials,]
