@@ -16,38 +16,19 @@ Further information about this work, including additional data and experimental 
   * [statistics.pdf](http://jefferislab.org/si/frulhns/statistics.pdf)
 
 ## Installation
-Choose the **Released versions** instructions unless you want to keep up with 
-package development.
-
-### Released versions
-There is presently no version on CRAN, but the package can be installed from our
-lab R repository.
+There is presently no version on CRAN,but you can use the
+[**remotes**](https://cran.r-project.org/package=remotes) package 
+to install the development versions of this package and its dependencies:
 
 ```r
-# first install frulhns R package and its dependencies
-# dependencies = TRUE will install suggested packages that are
-# required for building vignettes.
-install.packages('frulhns',repos=c(getOption("repos"),'http://jefferislab.org/R'),
-                 type='both',dependencies=TRUE)
-# now you can use the package to explore our data
-library(frulhns)
-```
-
-### Bleeding Edge
-You can also use the **devtools** package to install the development versions of
-this package and its main dependencies:
-
-```r
-if (!require("devtools")) install.packages("devtools")
-
-# install non-CRAN dependencies explicitly
-devtools::install_github("jefferis/gphys")
+if (!requireNamespace("remotes")) install.packages("remotes")
 # dependencies = TRUE will install suggested packages from CRAN that are required for the vignettes.
-devtools::install_github("jefferis/frulhns", dependencies=TRUE)
+remotes::install_github("jefferis/frulhns", dependencies=TRUE)
 ```
 
-Note: Windows users need [Rtools](http://www.murdoch-sutherland.com/Rtools/) in addition to 
-[devtools](http://CRAN.R-project.org/package=devtools) to install this way.
+Note: Windows users may need [Rtools](http://www.murdoch-sutherland.com/Rtools/) 
+in addition to [devtools](http://CRAN.R-project.org/package=devtools) to install
+this way.
 
 
 ## Install details
@@ -58,8 +39,7 @@ for creating this package, several additional packages are required including
 package and [nat](https://github.com/jefferis/nat) packages and the CRAN 
 package [coin](http://cran.r-project.org/package=coin). Following standard practice, 
 these packages are listed under the Suggested field of the DESCRIPTION file. 
-They can be installed when `dependencies=TRUE` is supplied as an installation 
-option with the exception of packages not available on [CRAN](http://cran.r-project.org/).
+They can be installed when `dependencies=TRUE` is supplied as an installation.
 
 ### AnalysisSuite
 The neuroanatomical analysis in the `neurons` vignette depend only on my 
@@ -72,7 +52,7 @@ neuron search/similarity code now available as package
 [nat.nblast](https://github.com/jefferislab/nat.nblast).
 
 If you wish to use the AnalysisSuite code to replicate analysis from 
-Kohl, Ostrovsky et al 2013 exactly as it was performed, 
+Kohl, Ostrovsky et al 2013 exactly as it was performed at the time, 
 you must install and load the [nat.as](https://github.com/jefferis/nat.as)
 wrapper R package, which is used to install and then load the AnalysisSuite codebase.
 Full details of the installation procedure are provided on the
