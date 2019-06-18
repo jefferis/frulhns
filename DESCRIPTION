@@ -23,3 +23,5 @@ VignetteBuilder: knitr
 LazyData: true
 RoxygenNote: 6.1.1
 Encoding: UTF-8
+Remotes:
+    jefferis/gphys
