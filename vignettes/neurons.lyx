@@ -1,7 +1,9 @@
-#LyX 2.0 created this file. For more info see http://www.lyx.org/
-\lyxformat 413
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
 \begin_document
 \begin_header
+\save_transient_properties true
+\origin unavailable
 \textclass article
 \begin_preamble
 %\VignetteIndexEntry{Plotting traced Lateral Horn Neurons}
@@ -15,16 +17,18 @@ knitr
 \language_package babel
 \inputencoding utf8
 \fontencoding global
-\font_roman times
-\font_sans helvet
-\font_typewriter courier
+\font_roman "times" "default"
+\font_sans "helvet" "default"
+\font_typewriter "courier" "default"
+\font_math "auto" "auto"
 \font_default_family rmdefault
 \use_non_tex_fonts false
 \font_sc false
 \font_osf false
-\font_sf_scale 100
-\font_tt_scale 100
-
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
 \graphics default
 \default_output_format default
 \output_sync 0
@@ -44,16 +48,26 @@ knitr
 \pdf_pdfusetitle true
 \papersize default
 \use_geometry true
-\use_amsmath 1
-\use_esint 1
-\use_mhchem 1
-\use_mathdots 1
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
 \cite_engine basic
+\cite_engine_type default
+\biblio_style plain
 \use_bibtopic false
 \use_indices false
 \paperorientation portrait
 \suppress_date false
+\justification true
 \use_refstyle 1
+\use_minted 0
 \index Index
 \shortcut idx
 \color #008000
@@ -66,7 +80,10 @@ knitr
 \tocdepth 3
 \paragraph_separation indent
 \paragraph_indentation default
-\quotes_language english
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
@@ -151,7 +168,7 @@ options(replace.assign=TRUE,width=55)
 
 \begin_layout Plain Layout
 
-knit_hooks$set(custom.plot = hook_rgl)
+rgl::setupKnitr()
 \end_layout
 
 \begin_layout Plain Layout
@@ -219,8 +236,7 @@ status open
 
 \begin_layout Plain Layout
 
-install.packages("nat",repos=c(getOption("repos"),'http://jefferislab.org/R'),type
-='both')
+install.packages("nat")
 \end_layout
 
 \begin_layout Plain Layout
@@ -280,7 +296,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<single-neuron-raw, custom.plot=TRUE>>=
+<<single-neuron-raw, rgl=TRUE>>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -313,7 +329,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<first-10-neurons-raw, custom.plot=TRUE>>=
+<<first-10-neurons-raw, rgl=TRUE>>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -347,7 +363,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<first-10-neurons, custom.plot=TRUE>>=
+<<first-10-neurons, rgl=TRUE>>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -482,7 +498,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<first-10-neurons-brain, custom.plot=TRUE, dev='png', dpi=300>>=
+<<first-10-neurons-brain, rgl=TRUE, dev='png', dpi=300>>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -513,8 +529,12 @@ plot3d(jkn[1:10],col=rainbow,WithNodes=FALSE)
 \begin_layout Standard
 The default view is a actually a dorsal one, that is looking down the dorso-vent
 ral axis onto the dorsal surface of the brain.
- People are actually more used to looking at a frontal view, so let's set
- up some quick utility functions to help:
+ People are actually more used to looking at a frontal view, but we can
+ use the 
+\family typewriter
+nview3d
+\family default
+ utility function to help plot the same data in a more conventional view:
 \end_layout
 
 \begin_layout Standard
@@ -523,175 +543,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<set3d functions>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-#' Set the 3d view using some standard Drosophila anatomical terms
-\end_layout
-
-\begin_layout Plain Layout
-
-#' 
-\end_layout
-
-\begin_layout Plain Layout
-
-#' @param pos The chosen view.
- Defaults to front (=anterior)
-\end_layout
-
-\begin_layout Plain Layout
-
-#' @param zoom Numeric zoom factor (default 0.7)
-\end_layout
-
-\begin_layout Plain Layout
-
-#' @seealso 
-\backslash
-code{
-\backslash
-link[rgl]{view3d}}
-\end_layout
-
-\begin_layout Plain Layout
-
-set3d<-function(pos=c("front","left","back","right","ventral","dorsal"),zoom=.7,...)
-{
-\end_layout
-
-\begin_layout Plain Layout
-
-	pos=match.arg(pos)
-\end_layout
-
-\begin_layout Plain Layout
-
-	m=diag(c(1,-1,-1,1)) # front
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-	if(pos=="left") {
-\end_layout
-
-\begin_layout Plain Layout
-
-		m=diag(c(0,-1,0,1))
-\end_layout
-
-\begin_layout Plain Layout
-
-		m[1,3]=1;m[3,1]=1
-\end_layout
-
-\begin_layout Plain Layout
-
-	}
-\end_layout
-
-\begin_layout Plain Layout
-
-	if(pos=="back") {
-\end_layout
-
-\begin_layout Plain Layout
-
-		m=diag(c(-1,-1,1,1))
-\end_layout
-
-\begin_layout Plain Layout
-
-	}
-\end_layout
-
-\begin_layout Plain Layout
-
-	if(pos=="right") {
-\end_layout
-
-\begin_layout Plain Layout
-
-		m=diag(c(0,-1,0,1))
-\end_layout
-
-\begin_layout Plain Layout
-
-		m[1,3]=m[3,1]=-1
-\end_layout
-
-\begin_layout Plain Layout
-
-	}
-\end_layout
-
-\begin_layout Plain Layout
-
-	if(pos=="ventral") {
-\end_layout
-
-\begin_layout Plain Layout
-
-		m=diag(c(1,-1,-1,1))
-\end_layout
-
-\begin_layout Plain Layout
-
-	}
-\end_layout
-
-\begin_layout Plain Layout
-
-	if(pos=="dorsal") {
-\end_layout
-
-\begin_layout Plain Layout
-
-		m=diag(c(1,1,1,1))
-\end_layout
-
-\begin_layout Plain Layout
-
-	}
-\end_layout
-
-\begin_layout Plain Layout
-
-	view3d(userMatrix=m,zoom=zoom,...)
-\end_layout
-
-\begin_layout Plain Layout
-
-}
-\end_layout
-
-\begin_layout Plain Layout
-
-@
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Now we can plot the same data in a more conventional view:
-\end_layout
-
-\begin_layout Standard
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-<<first-10-neurons-brain-frontal, custom.plot=TRUE, dev='png', dpi=300>>=
+<<first-10-neurons-brain-frontal, rgl=TRUE, dev='png', dpi=300>>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -711,7 +563,7 @@ plot3d(jkn[1:10],col=rainbow,WithNodes=FALSE)
 
 \begin_layout Plain Layout
 
-set3d("front")
+nview3d("frontal", zoom=0.7)
 \end_layout
 
 \begin_layout Plain Layout
@@ -721,12 +573,12 @@ set3d("front")
 
 \begin_layout Plain Layout
 
-# get smaller as you zoom in (see ?view3d for details)
+# get smaller as you zoom in (see ?nview3d for details)
 \end_layout
 
 \begin_layout Plain Layout
 
-set3d("front",0.5)
+nview3d("frontal", zoom=0.5)
 \end_layout
 
 \begin_layout Plain Layout
@@ -746,8 +598,15 @@ Plotting selected neurons
 \begin_layout Standard
 OK, now let's look at a particular set of lateral horn neurons: wild type
  aSP-g.
- We can use the dataframe attached to the neuronlist to select which neurons
- to plot and how to colour them.
+ We can use the 
+\family typewriter
+dataframe
+\family default
+ attached to the 
+\family typewriter
+neuronlist
+\family default
+ to select which neurons to plot and how to colour them.
 \end_layout
 
 \begin_layout Standard
@@ -756,7 +615,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<asgp-wildtype, custom.plot=TRUE, dev='png', dpi=300>>=
+<<asgp-wildtype, rgl=TRUE, dev='png', dpi=300>>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -772,7 +631,7 @@ ale='cyan',female='magenta'),WithNodes=FALSE,lwd=2)
 
 \begin_layout Plain Layout
 
-set3d("front")
+nview3d("frontal", zoom=0.7)
 \end_layout
 
 \begin_layout Plain Layout
@@ -801,7 +660,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<JK1029-wildtype-male, custom.plot=TRUE, dev='png', dpi=300>>=
+<<JK1029-wildtype-male, rgl=TRUE, dev='png', dpi=300>>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -821,7 +680,7 @@ col=cluster,WithNodes=FALSE,lwd=2)
 
 \begin_layout Plain Layout
 
-set3d("front")
+nview3d("frontal", zoom=0.7)
 \end_layout
 
 \begin_layout Plain Layout

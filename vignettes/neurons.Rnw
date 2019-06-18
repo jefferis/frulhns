@@ -1,4 +1,4 @@
-%% LyX 2.1.0 created this file.  For more info, see http://www.lyx.org/.
+%% LyX 2.3.1-1 created this file.  For more info, see http://www.lyx.org/.
 %% Do not edit unless you really know what you are doing.
 \documentclass[british]{article}
 \usepackage{mathptmx}
@@ -15,7 +15,6 @@
  bookmarks=true,bookmarksnumbered=false,bookmarksopen=false,
  breaklinks=false,pdfborder={0 0 1},backref=false,colorlinks=false]
  {hyperref}
-\usepackage{breakurl}
 
 \makeatletter
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
@@ -24,10 +23,7 @@
 \makeatother
 
 \begin{document}
-
 \title{Plotting traced Lateral Horn Neurons (LHNs)}
-
-
 \author{Gregory Jefferis, Johannes Kohl, Aaron Ostrovsky, Shahar Frechter}
 \maketitle
 \begin{abstract}
@@ -47,7 +43,7 @@ library(frulhns)
 opts_chunk$set(fig.path='fig-',fig.align='center',fig.show='hold',fig.height=3,fig.width=4,out.height='3in',out.width='4in')
 options(replace.assign=TRUE,width=55)
 # so that we can make snapshots from rgl plots
-knit_hooks$set(custom.plot = hook_rgl)
+rgl::setupKnitr()
 tryCatch({
 	library(nat)
 },error = function(e) {
@@ -62,9 +58,8 @@ but the quickest method is to run the following code in an interactive
 session:
 
 <<install-instructions, eval=FALSE>>=
-install.packages("nat",repos=c(getOption("repos"),'http://jefferislab.org/R'),type='both')
+install.packages("nat")
 @
-
 
 \section{Basic Plots}
 
@@ -78,14 +73,14 @@ library(nat)
 
 Let's start by plotting a single neuron before registration
 
-<<single-neuron-raw, custom.plot=TRUE>>=
+<<single-neuron-raw, rgl=TRUE>>=
 open3d()
 plot3d(jknraw[[1]])
 @
 
 First 10 neurons
 
-<<first-10-neurons-raw, custom.plot=TRUE>>=
+<<first-10-neurons-raw, rgl=TRUE>>=
 clear3d()
 plot3d(jknraw[1:10],col=rainbow,WithNodes=FALSE)
 @
@@ -93,11 +88,10 @@ plot3d(jknraw[1:10],col=rainbow,WithNodes=FALSE)
 Now looking at multiple neurons before registration doesn't make much
 sense, so let's try again using the registered neurons
 
-<<first-10-neurons, custom.plot=TRUE>>=
+<<first-10-neurons, rgl=TRUE>>=
 clear3d()
 plot3d(jkn[1:10],col=rainbow,WithNodes=FALSE)
 @
-
 
 \section{Brains and Views}
 
@@ -123,7 +117,7 @@ is2surf<-function(alpha=0.2,col='grey',...){
 
 Now we can use that to provide some context:
 
-<<first-10-neurons-brain, custom.plot=TRUE, dev='png', dpi=300>>=
+<<first-10-neurons-brain, rgl=TRUE, dev='png', dpi=300>>=
 clear3d()
 is2surf()
 plot3d(jkn[1:10],col=rainbow,WithNodes=FALSE)
@@ -131,63 +125,30 @@ plot3d(jkn[1:10],col=rainbow,WithNodes=FALSE)
 
 The default view is a actually a dorsal one, that is looking down
 the dorso-ventral axis onto the dorsal surface of the brain. People
-are actually more used to looking at a frontal view, so let's set
-up some quick utility functions to help:
+are actually more used to looking at a frontal view, but we can use
+the \texttt{nview3d} utility function to help plot the same data in
+a more conventional view:
 
-<<set3d functions>>=
-#' Set the 3d view using some standard Drosophila anatomical terms
-#' 
-#' @param pos The chosen view. Defaults to front (=anterior)
-#' @param zoom Numeric zoom factor (default 0.7)
-#' @seealso \code{\link[rgl]{view3d}}
-set3d<-function(pos=c("front","left","back","right","ventral","dorsal"),zoom=.7,...){
-	pos=match.arg(pos)
-	m=diag(c(1,-1,-1,1)) # front
-
-	if(pos=="left") {
-		m=diag(c(0,-1,0,1))
-		m[1,3]=1;m[3,1]=1
-	}
-	if(pos=="back") {
-		m=diag(c(-1,-1,1,1))
-	}
-	if(pos=="right") {
-		m=diag(c(0,-1,0,1))
-		m[1,3]=m[3,1]=-1
-	}
-	if(pos=="ventral") {
-		m=diag(c(1,-1,-1,1))
-	}
-	if(pos=="dorsal") {
-		m=diag(c(1,1,1,1))
-	}
-	view3d(userMatrix=m,zoom=zoom,...)
-}
-@
-
-Now we can plot the same data in a more conventional view:
-
-<<first-10-neurons-brain-frontal, custom.plot=TRUE, dev='png', dpi=300>>=
+<<first-10-neurons-brain-frontal, rgl=TRUE, dev='png', dpi=300>>=
 clear3d()
 is2surf()
 plot3d(jkn[1:10],col=rainbow,WithNodes=FALSE)
-set3d("front")
+nview3d("frontal", zoom=0.7)
 # Hmm, let's zoom in a bit, notice that zoom values
-# get smaller as you zoom in (see ?view3d for details)
-set3d("front",0.5)
+# get smaller as you zoom in (see ?nview3d for details)
+nview3d("frontal", zoom=0.5)
 @
-
 
 \section{Plotting selected neurons}
 
 OK, now let's look at a particular set of lateral horn neurons: wild
-type aSP-g. We can use the dataframe attached to the neuronlist to
-select which neurons to plot and how to colour them.
+type aSP-g. We can use the \texttt{dataframe} attached to the \texttt{neuronlist}
+to select which neurons to plot and how to colour them.
 
-<<asgp-wildtype, custom.plot=TRUE, dev='png', dpi=300>>=
+<<asgp-wildtype, rgl=TRUE, dev='png', dpi=300>>=
 clear3d()
 plot3d(jkn,subset=cluster=="aSP-g" & shortGenotype=="JK1029", col=sex,colpal=c(male='cyan',female='magenta'),WithNodes=FALSE,lwd=2)
-set3d("front")
+nview3d("frontal", zoom=0.7)
 @
 
 The distinction between male and female neurons is clear with several
@@ -196,11 +157,11 @@ regions that are exclusively innervated by male or female arbours.
 Similarly let's look at all the neurons recored from the wildtype
 JK1029-Gal4 male flies.
 
-<<JK1029-wildtype-male, custom.plot=TRUE, dev='png', dpi=300>>=
+<<JK1029-wildtype-male, rgl=TRUE, dev='png', dpi=300>>=
 clear3d()
 plotresult=plot3d(jkn,subset=shortGenotype=="JK1029" & sex=="male",
 col=cluster,WithNodes=FALSE,lwd=2)
-set3d("front")
+nview3d("frontal", zoom=0.7)
 # note that plotresult includes a useful dataframe as an attribute
 # with details about the selected neurons
 head(attr(plotresult,'df'))
