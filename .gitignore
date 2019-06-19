@@ -5,3 +5,4 @@
 *.lyx#
 vignettes/cache
 vignettes/figure
+inst/doc

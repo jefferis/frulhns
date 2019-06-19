@@ -5,3 +5,6 @@
 ^vignettes/cache/
 ^vignettes/fig-
 ^vignettes/.*\.(aux|bbl|blg|brd|fot|glo|gls|idx|ilg|ind|lof|log|lot|nav|out|snm|toc|url|pdf)$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
