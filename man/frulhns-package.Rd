@@ -11,6 +11,6 @@ Traced neurons and summary statistical data to accompany:
     A bidirectional circuit switch reroutes pheromone signals in male and female
     brains Cell, Volume 155, Issue 7, 1610-1623, 19 December 2013
     doi:10.1016/j.cell.2013.11.025 Johannes Kohl*, Aaron D. Ostrovsky*, Shahar
-    Frechter, Gregory S.X.E. Jefferis
+    Frechter, Gregory S.X.E. Jefferis.
 }
 \keyword{internal}

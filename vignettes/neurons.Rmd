@@ -1,55 +1,41 @@
-%% LyX 2.3.1-1 created this file.  For more info, see http://www.lyx.org/.
-%% Do not edit unless you really know what you are doing.
-\documentclass[british]{article}
-\usepackage{mathptmx}
-\usepackage{helvet}
-\usepackage{courier}
-\renewcommand{\familydefault}{\rmdefault}
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
-\usepackage{geometry}
-\geometry{verbose,tmargin=3cm,bmargin=3cm,lmargin=3cm,rmargin=3cm}
-\usepackage{babel}
-\usepackage{url}
-\usepackage[unicode=true,pdfusetitle,
- bookmarks=true,bookmarksnumbered=false,bookmarksopen=false,
- breaklinks=false,pdfborder={0 0 1},backref=false,colorlinks=false]
- {hyperref}
+---
+title: "Plotting traced Lateral Horn Neurons"
+output: rmarkdown::html_vignette
+author: "Gregory Jefferis, Johannes Kohl, Aaron Ostrovsky, Shahar Frechter"
+vignette: >
+  %\VignetteIndexEntry{Plotting traced Lateral Horn Neurons}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
 
-\makeatletter
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
-%\VignetteIndexEntry{Plotting traced Lateral Horn Neurons}
-
-\makeatother
-
-\begin{document}
-\title{Plotting traced Lateral Horn Neurons (LHNs)}
-\author{Gregory Jefferis, Johannes Kohl, Aaron Ostrovsky, Shahar Frechter}
-\maketitle
-\begin{abstract}
+## Intro
 This vignette shows some examples of how to use neuronal tracings
-in combination with GJ's nat (NeuroAnatomy Toolbox) R package to analyse
+in combination with GJ's [nat](https://github.com/jefferis/nat)
+(NeuroAnatomy Toolbox) R package to analyse
 the structure of lateral horn neurons in this study.
-\end{abstract}
 
-\section{Installation }
+## Installation
 
-<<setup, include=FALSE, cache=FALSE>>=
-library(knitr)
+```{r setup, include=FALSE}
 library(frulhns)
 # note setting fig.path like this (i.e. putting figures in the same folder as the other files)
 # works around a subtle bug in knitr where the 'figure' subfolder is not created by a custom plot
 # hook such as hook_rgl (but this folder would be created by a regular 'plot').
-opts_chunk$set(fig.path='fig-',fig.align='center',fig.show='hold',fig.height=3,fig.width=4,out.height='3in',out.width='4in')
+knitr::opts_chunk$set(
+  fig.height = 4,
+  fig.width = 6,
+  collapse = TRUE,
+  comment = "#>"
+)
 options(replace.assign=TRUE,width=55)
 # so that we can make snapshots from rgl plots
 rgl::setupKnitr()
 tryCatch({
-	library(nat)
+  library(nat)
 },error = function(e) {
-	stop("Please install nat package from https://github.com/jefferis/nat")
+  stop("Please install nat package from https://github.com/jefferis/nat")
 })
-@
+```
 
 Before running this vignette, it is necessary to install an R package
 nat (NeuroAnatomy Toolbox). This will have happened if you installed
@@ -57,49 +43,46 @@ the frulhns package. There are instructions at \url{https://github.com/jefferis/
 but the quickest method is to run the following code in an interactive
 session:
 
-<<install-instructions, eval=FALSE>>=
+```{r install-instructions, eval=FALSE}
 install.packages("nat")
-@
+```
 
-\section{Basic Plots}
+## Basic Plots
 
 Now we can start a fresh R session, load required libraries and get
 to work
 
-<<eval=FALSE>>=
+```{r eval=FALSE}
 library(frulhns)
 library(nat)
-@
+```
 
 Let's start by plotting a single neuron before registration
 
-<<single-neuron-raw, rgl=TRUE>>=
-open3d()
+```{r single-neuron-raw, rgl=TRUE}
 plot3d(jknraw[[1]])
-@
+```
 
 First 10 neurons
 
-<<first-10-neurons-raw, rgl=TRUE>>=
-clear3d()
-plot3d(jknraw[1:10],col=rainbow,WithNodes=FALSE)
-@
+```{r first-10-neurons-raw, rgl=TRUE}
+plot3d(jknraw[1:10], col = rainbow, WithNodes = FALSE)
+```
 
 Now looking at multiple neurons before registration doesn't make much
 sense, so let's try again using the registered neurons
 
-<<first-10-neurons, rgl=TRUE>>=
-clear3d()
-plot3d(jkn[1:10],col=rainbow,WithNodes=FALSE)
-@
+```{r first-10-neurons, rgl=TRUE}
+plot3d(jkn[1:10], col = rainbow, WithNodes = FALSE)
+```
 
-\section{Brains and Views}
+## Brains and Views
 
 We can already see that those neurons are more tightly distributed.
 However it's not really too clear how they relate to the structure
 of the brain. Let's define a quick function to plot a brain surface.
 
-<<IS2Surf>>=
+```{r IS2Surf}
 #' Use rgl to plot a 3d surface of the brain
 #' 
 #' @param alpha Alpha value for surface
@@ -110,18 +93,18 @@ of the brain. Let's define a quick function to plot a brain surface.
 #' @seealso \code{plot3dsurface} in \code{AnalysisSuite} code bundle.
 #' is2surf()
 #' is2surf(alpha=0.4,col='cyan')
-is2surf<-function(alpha=0.2,col='grey',...){
-  plot3d(IS2Surf,"Exterior",col=col,alpha=alpha,...)
+is2surf <- function(alpha = 0.2, col = 'grey', ...) {
+  plot3d(IS2Surf, "Exterior", col = col, alpha = alpha, ...)
 }
-@
+```
 
 Now we can use that to provide some context:
 
-<<first-10-neurons-brain, rgl=TRUE, dev='png', dpi=300>>=
+```{r first-10-neurons-brain, rgl=TRUE}
 clear3d()
 is2surf()
-plot3d(jkn[1:10],col=rainbow,WithNodes=FALSE)
-@
+plot3d(jkn[1:10], col = rainbow, WithNodes = FALSE)
+```
 
 The default view is a actually a dorsal one, that is looking down
 the dorso-ventral axis onto the dorsal surface of the brain. People
@@ -129,27 +112,33 @@ are actually more used to looking at a frontal view, but we can use
 the \texttt{nview3d} utility function to help plot the same data in
 a more conventional view:
 
-<<first-10-neurons-brain-frontal, rgl=TRUE, dev='png', dpi=300>>=
-clear3d()
+```{r first-10-neurons-brain-frontal, rgl=TRUE}
 is2surf()
-plot3d(jkn[1:10],col=rainbow,WithNodes=FALSE)
+plot3d(jkn[1:10], col = rainbow, WithNodes = FALSE)
 nview3d("frontal", zoom=0.7)
+```
+
+```{r first-10-neurons-brain-frontal-zoom, rgl=TRUE}
+is2surf()
+plot3d(jkn[1:10], col = rainbow, WithNodes = FALSE)
 # Hmm, let's zoom in a bit, notice that zoom values
 # get smaller as you zoom in (see ?nview3d for details)
-nview3d("frontal", zoom=0.5)
-@
+nview3d("frontal", zoom = 0.5)
+```
 
-\section{Plotting selected neurons}
+## Plotting selected neurons
 
 OK, now let's look at a particular set of lateral horn neurons: wild
 type aSP-g. We can use the \texttt{dataframe} attached to the \texttt{neuronlist}
 to select which neurons to plot and how to colour them.
 
-<<asgp-wildtype, rgl=TRUE, dev='png', dpi=300>>=
-clear3d()
-plot3d(jkn,subset=cluster=="aSP-g" & shortGenotype=="JK1029", col=sex,colpal=c(male='cyan',female='magenta'),WithNodes=FALSE,lwd=2)
+```{r asgp-wildtype, rgl=TRUE}
+plot3d(jkn,
+       subset=cluster=="aSP-g" & shortGenotype=="JK1029",
+       col=sex, colpal=c(male='cyan',female='magenta'), 
+       WithNodes=FALSE,lwd=2)
 nview3d("frontal", zoom=0.7)
-@
+```
 
 The distinction between male and female neurons is clear with several
 regions that are exclusively innervated by male or female arbours.
@@ -157,17 +146,15 @@ regions that are exclusively innervated by male or female arbours.
 Similarly let's look at all the neurons recored from the wildtype
 JK1029-Gal4 male flies.
 
-<<JK1029-wildtype-male, rgl=TRUE, dev='png', dpi=300>>=
-clear3d()
-plotresult=plot3d(jkn,subset=shortGenotype=="JK1029" & sex=="male",
-col=cluster,WithNodes=FALSE,lwd=2)
+```{r JK1029-wildtype-male, rgl=TRUE}
+plotresult=plot3d(jkn, subset=shortGenotype=="JK1029" & sex=="male",
+                  col=cluster,WithNodes=FALSE,lwd=2)
 nview3d("frontal", zoom=0.7)
 # note that plotresult includes a useful dataframe as an attribute
 # with details about the selected neurons
 head(attr(plotresult,'df'))
-@
+```
 
 There are 3 clusters. The cell bodies for aSP-f (red) are more dorsal
 whereas those for aSP-g and aSP-h (green, blue) are more lateral and
 not obviously separable.
-\end{document}

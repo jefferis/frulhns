@@ -2,7 +2,6 @@
 ^\.gitignore
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^.*\.html$
 ^vignettes/cache/
 ^vignettes/fig-
 ^vignettes/.*\.(aux|bbl|blg|brd|fot|glo|gls|idx|ilg|ind|lof|log|lot|nav|out|snm|toc|url|pdf)$
