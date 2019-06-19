@@ -16,8 +16,7 @@ names, stimulus duration, odour delivery device channel etc.)
 \donttest{
 # a cell that is highly selective for cVA pheromone
 gphys::PlotRasterFromSweeps(allspikes[[1]])
-# note that the external TTL puslse occured a 2000 ms with 0 delay after
-that
+# note that the external TTL puslse occured at 2000 ms with 0 delay after that
 head(attr(allspikes[[1]],'oddconf'))
 }
 }
