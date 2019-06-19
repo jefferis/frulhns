@@ -13,9 +13,12 @@ the gphys package, including associating the stimulus information (odour
 names, stimulus duration, odour delivery device channel etc.)
 }
 \examples{
-\dontrun{
-str(allspikes[[1]])
-attr(allspikes[[1]],'oddconf')[,1:4]
+\donttest{
+# a cell that is highly selective for cVA pheromone
+gphys::PlotRasterFromSweeps(allspikes[[1]])
+# note that the external TTL puslse occured a 2000 ms with 0 delay after
+that
+head(attr(allspikes[[1]],'oddconf'))
 }
 }
 \seealso{

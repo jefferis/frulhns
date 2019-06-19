@@ -9,8 +9,8 @@ Surface model of the IS2 Template brain used for image registration
 }
 \examples{
 \dontrun{
-# Depends on AnalysisSuite
-plot3dsurface(IS2Surf)
+library(nat)
+plot3d(IS2Surf)
 }
 }
 \references{

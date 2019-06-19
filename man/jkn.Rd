@@ -13,8 +13,12 @@ AnalysisSuite package. The individual objects are of class neuron. Again
 there are a number of functions defined for plotting/analysis in AnalysisSuite.
 }
 \examples{
+\donttest{
+library(nat)
+plot(jkn,subset=cluster=='aSP-f' & shortGenotype=="JK1029",
+  col=sex, WithNodes=F, main='aSP-f LHNs coloured by sex')
+}
 \dontrun{
-library(rgl)
 plot3d(jkn[[1]])
 plot3d(jkn[1:10],col='red')
 plot3d(jkn[1:10],col=rainbow)

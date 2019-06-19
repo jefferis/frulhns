@@ -18,7 +18,8 @@ Suggests:
     ggplot2,
     gphys,
     nat,
-    rmarkdown
+    rmarkdown,
+    stats
 VignetteBuilder: knitr
 LazyData: true
 RoxygenNote: 6.1.1

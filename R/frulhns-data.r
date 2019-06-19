@@ -8,8 +8,12 @@
 #' @name jkn
 #' @docType data
 #' @examples
+#' \donttest{
+#' library(nat)
+#' plot(jkn,subset=cluster=='aSP-f' & shortGenotype=="JK1029",
+#'   col=sex, WithNodes=F, main='aSP-f LHNs coloured by sex')
+#' }
 #' \dontrun{
-#' library(rgl)
 #' plot3d(jkn[[1]])
 #' plot3d(jkn[1:10],col='red')
 #' plot3d(jkn[1:10],col=rainbow)
@@ -32,8 +36,8 @@ NULL
 #' @docType data
 #' @examples
 #' \dontrun{
-#' # Depends on AnalysisSuite
-#' plot3dsurface(IS2Surf)
+#' library(nat)
+#' plot3d(IS2Surf)
 #' }
 NULL
 
@@ -49,13 +53,16 @@ NULL
 #' @docType data
 #' @seealso \code{\link[gphys]{spiketimes}, \link{fixedUseful}}
 #' @examples
-#' \dontrun{
-#' str(allspikes[[1]])
-#' attr(allspikes[[1]],'oddconf')[,1:4]
+#' \donttest{
+#' # a cell that is highly selective for cVA pheromone
+#' gphys::PlotRasterFromSweeps(allspikes[[1]])
+#' # note that the external TTL puslse occured a 2000 ms with 0 delay after
+#' that
+#' head(attr(allspikes[[1]],'oddconf'))
 #' }
 NULL
 
-#' Dataframe combining cell metadata and odours response summaries for 254 LHNs
+#' Dataframe combining cell metadata and odour response summaries for 254 LHNs
 #' 
 #' Each row is a neuron whose electrophysiological data met quality thesholds. 
 #' In contrast to \code{\link{allspikes}} these data do not include cells from 
@@ -63,7 +70,7 @@ NULL
 #' @name fixedUseful
 #' @docType data
 #' @seealso \code{\link{asr}, \link{allspikes}}
-NULL
+"fixedUseful"
 
 #' Absolute spike response to odours for 254 LHNs
 #' 
@@ -79,5 +86,9 @@ NULL
 #' nrow(asr[[1]])
 #' # number of sweeps per odour
 #' colSums(!is.na(asr[[1]]))
+#' 
+#' \donttest{
+#' stats::heatmap(asr[[1]][,1:5], Rowv = NA)
+#' }
 #' @seealso \code{\link{fixedUseful}}
 NULL

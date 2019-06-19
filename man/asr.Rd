@@ -16,6 +16,10 @@ summary(asr[[1]])
 nrow(asr[[1]])
 # number of sweeps per odour
 colSums(!is.na(asr[[1]]))
+
+\donttest{
+stats::heatmap(asr[[1]][,1:5], Rowv = NA)
+}
 }
 \seealso{
 \code{\link{fixedUseful}}
