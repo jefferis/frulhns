@@ -1,3 +1,9 @@
+# frulhns 0.4.2
+
+* vignette updates to match latest versions of packages
+* pkgdown documentation site
+* small improvements to help
+
 # frulhns 0.4.1
 
 * Add examples of plotting subsets of neurons to neurons vignette
