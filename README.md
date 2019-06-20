@@ -39,13 +39,14 @@ this way.
 
 ## Install details
 ### Dependencies
-See [DESCRIPTION](DESCRIPTION). In order to build the vignettes, which are one of the main reasons 
+See [DESCRIPTION](https://github.com/jefferis/frulhns/blob/master/DESCRIPTION).
+In order to build the vignettes, which are one of the main reasons 
 for creating this package, several additional packages are required including 
 [knitr](http://yihui.name/knitr/), my [gphys](https://github.com/jefferis/gphys) 
 package and [nat](https://github.com/jefferis/nat) packages and the CRAN 
 package [coin](http://cran.r-project.org/package=coin). Following standard practice, 
 these packages are listed under the Suggested field of the DESCRIPTION file. 
-They can be installed when `dependencies=TRUE` is supplied as an installation.
+They can be installed when `dependencies=TRUE` is supplied on installation.
 
 ### AnalysisSuite
 The neuroanatomical analysis in the `neurons` vignette depend only on my 
