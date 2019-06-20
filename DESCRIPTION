@@ -26,3 +26,5 @@ RoxygenNote: 6.1.1
 Encoding: UTF-8
 Remotes:
     jefferis/gphys
+URL: https://github.com/jefferis/frulhns
+BugReports: https://github.com/jefferis/frulhns/issues

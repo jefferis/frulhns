@@ -13,4 +13,12 @@ Traced neurons and summary statistical data to accompany:
     doi:10.1016/j.cell.2013.11.025 Johannes Kohl*, Aaron D. Ostrovsky*, Shahar
     Frechter, Gregory S.X.E. Jefferis.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/jefferis/frulhns}
+  \item Report bugs at \url{https://github.com/jefferis/frulhns/issues}
+}
+
+}
 \keyword{internal}
