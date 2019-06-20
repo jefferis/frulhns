@@ -1,8 +1,15 @@
-# frulhns 0.4.2
+# frulhns 0.5.0
 
 * vignette updates to match latest versions of packages
 * pkgdown documentation site
 * small improvements to help
+* readme: notes about running old versions of code
+* dev: travis
+
+# frulhns 0.4.2
+
+* upgrade to LyX 2.1.0
+* fix knitr error for vignettes
 
 # frulhns 0.4.1
 
