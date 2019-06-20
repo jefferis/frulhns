@@ -1,5 +1,11 @@
 # frulhns
-[![DOI](https://zenodo.org/badge/4241/jefferis/frulhns.png)](http://dx.doi.org/10.5281/zenodo.10173) 
+<!-- badges: start -->
+[![Docs](https://img.shields.io/badge/docs-100%25-brightgreen.svg)](http://jefferis.github.io/frulhns/)
+[![DOI](https://zenodo.org/badge/15346264.svg)](https://zenodo.org/badge/latestdoi/15346264)
+[![Release Version](https://img.shields.io/github/release/jefferis/frulhns.svg)](https://github.com/jefferis/frulhns/releases/latest) 
+[![Travis build status](https://travis-ci.org/jefferis/frulhns.svg?branch=master)](https://travis-ci.org/jefferis/frulhns)
+<!-- badges: end -->
+
 ## Introduction
 This project distributes all electrophysiological spike data, statistical analysis,
 and traced neurons associated with the open access publication:
